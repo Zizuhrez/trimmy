@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Appointment</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+  <script src="firebase.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Book Appointment</h2>
+    <form id="bookingForm">
+      <input type="text" id="firstName" placeholder="First Name" required />
+      <input type="text" id="lastName" placeholder="Last Name" required />
+      <input type="tel" id="phone" placeholder="Phone Number" required />
+      
+      <select id="appointmentType" required>
+        <option value="">Select Type</option>
+        <option value="Regular">Regular ($10)</option>
+        <option value="VIP">VIP ($20)</option>
+      </select>
+      
+      <p id="paymentAmount">Payment: $0</p>
+      <button type="submit">Book Now</button>
+    </form>
+
+    <h3>Live Appointments</h3>
+    <ul id="queueList"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

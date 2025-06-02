@@ -1,0 +1,112 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(to right, #e3f2fd, #fce4ec);
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.container {
+  background: #ffffff;
+  max-width: 500px;
+  margin: auto;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+h2, h3 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+input, select, button {
+  width: 100%;
+  margin: 12px 0;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #4a90e2;
+}
+
+button {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #357ABD;
+}
+
+#queueList {
+  list-style: none;
+  padding: 0;
+}
+
+.appointment-card {
+  background: #f9f9f9;
+  border-left: 6px solid #2196f3;
+  margin-bottom: 16px;
+  padding: 14px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.appointment-card:hover {
+  transform: translateY(-2px);
+}
+
+.appointment-info {
+  flex-grow: 1;
+}
+
+.status-badge {
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.waiting {
+  background: #ff9800;
+}
+
+.serving {
+  background: #4caf50;
+}
+
+.served {
+  background: #9e9e9e;
+  text-decoration: line-through;
+}
+
+.nickname {
+  font-weight: bold;
+  font-size: 17px;
+  color: #2d3436;
+}
+
+.type {
+  font-size: 15px;
+  color: #636e72;
+}
