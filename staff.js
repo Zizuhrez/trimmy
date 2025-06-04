@@ -24,18 +24,42 @@ db.collection("appointments")
       li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
 
       if (person.status === "waiting") {
-        const serveBtn = document.createElement("button");
-        serveBtn.textContent = "Serving";
-        serveBtn.onclick = () => {
-          const inputPin = prompt("Enter customer's 4-digit PIN:");
-          if (inputPin === String(person.pin)) {
-            updateStatus(person.id, "serving");
-          } else {
-            alert("Incorrect PIN. You cannot serve this customer.");
-          }
-        };
-        li.appendChild(serveBtn);
-      }
+  // Serve with PIN
+  const serveBtn = document.createElement("button");
+  serveBtn.textContent = "Serving";
+  serveBtn.onclick = () => {
+    const inputPin = prompt("Enter customer's 4-digit PIN:");
+    if (inputPin === String(person.pin)) {
+      updateStatus(person.id, "serving");
+    } else {
+      alert("Incorrect PIN. You cannot serve this customer.");
+    }
+  };
+  li.appendChild(serveBtn);
+
+  // Show PIN (hidden by default)
+  const showPinBtn = document.createElement("button");
+  showPinBtn.textContent = "👁 Show PIN";
+  const pinSpan = document.createElement("span");
+  pinSpan.textContent = `PIN: ${person.pin}`;
+  pinSpan.style.display = "none";
+  pinSpan.style.marginLeft = "10px";
+  showPinBtn.onclick = () => {
+    pinSpan.style.display = pinSpan.style.display === "none" ? "inline" : "none";
+  };
+  li.appendChild(showPinBtn);
+  li.appendChild(pinSpan);
+
+  // Override PIN (use carefully)
+  const overrideBtn = document.createElement("button");
+  overrideBtn.textContent = "Override PIN";
+  overrideBtn.onclick = () => {
+    if (confirm("Are you sure you want to override the PIN check for this customer?")) {
+      updateStatus(person.id, "serving");
+    }
+  };
+  li.appendChild(overrideBtn);
+}
 
       if (person.status === "serving") {
         const servedBtn = document.createElement("button");
