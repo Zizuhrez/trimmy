@@ -1,30 +1,47 @@
-const form = document.getElementById("bookingForm");
-const appointmentType = document.getElementById("appointmentType");
-const paymentAmount = document.getElementById("paymentAmount");
+const staffQueue = document.getElementById("staffQueue");
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+function updateStatus(docId, newStatus) {
+  db.collection("appointments").doc(docId).update({ status: newStatus });
+}
 
-  const firstName = document.getElementById("firstName").value.trim();
-  const lastName = document.getElementById("lastName").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const type = appointmentType.value;
-  const price = type === "VIP" ? 20 : 10;
-  const nickname = firstName.toLowerCase();
+db.collection("appointments")
+  .orderBy("timestamp")
+  .onSnapshot(snapshot => {
+    const vipList = [];
+    const regularList = [];
 
-  const pin = Math.floor(1000 + Math.random() * 9000); // 🔐 Generate 4-digit PIN
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      data.id = doc.id;
+      if (data.type === "VIP") vipList.push(data);
+      else regularList.push(data);
+    });
 
-  await db.collection("appointments").add({
-    nickname,
-    type,
-    phone,
-    price,
-    pin, // ✅ Save PIN with appointment
-    status: "waiting",
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    const fullList = [...vipList, ...regularList];
+    staffQueue.innerHTML = "";
+    fullList.forEach((person, index) => {
+      const li = document.createElement("li");
+      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
+
+      if (person.status === "waiting") {
+        const serveBtn = document.createElement("button");
+        serveBtn.textContent = "Serving";
+        serveBtn.onclick = () => updateStatus(person.id, "serving");
+        li.appendChild(serveBtn);
+      }
+
+      if (person.status === "serving") {
+        const servedBtn = document.createElement("button");
+        servedBtn.textContent = "Mark as Served";
+        servedBtn.onclick = () => updateStatus(person.id, "served");
+        li.appendChild(servedBtn);
+        li.style.background = "#fff5d1";
+      }
+
+      if (person.status === "served") {
+        li.classList.add("served");
+      }
+
+      staffQueue.appendChild(li);
+    });
   });
-
-  alert(`Appointment booked! You’ll pay $${price}\nYour PIN: ${pin}\nKeep it safe — staff will need it.`);
-  form.reset();
-  paymentAmount.textContent = "Payment: $0";
-});
