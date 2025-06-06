@@ -1,36 +1,55 @@
-// Get the form and Firestore
 const form = document.getElementById("bookingForm");
-const db = firebase.firestore();
+const appointmentType = document.getElementById("appointmentType");
+const paymentAmount = document.getElementById("paymentAmount");
+const queueList = document.getElementById("queueList");
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  // Get form input values
-  const name = document.getElementById("name").value;
-  const type = document.getElementById("appointmentType").value;
-
-  // Generate a 4-digit random PIN
-  const pin = Math.floor(1000 + Math.random() * 9000).toString();
-
-  // Save to Firestore
-  db.collection("appointments").add({
-    name,
-    type,
-    status: "waiting",
-    pin,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  })
-  .then(() => {
-    // Save PIN (and other info if needed) in localStorage
-    localStorage.setItem("appointmentPIN", pin);
-    localStorage.setItem("appointmentName", name);
-    localStorage.setItem("appointmentType", type);
-
-    // Redirect to confirmation page
-    window.location.href = "confirmation.html";
-  })
-  .catch((error) => {
-    console.error("❌ Error booking appointment:", error);
-    alert("Something went wrong. Please try again.");
-  });
+appointmentType.addEventListener("change", () => {
+  const type = appointmentType.value;
+  paymentAmount.textContent = type === "VIP" ? "Payment: $20" :
+                              type === "Regular" ? "Payment: $10" : "Payment: $0";
 });
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const type = appointmentType.value;
+  const price = type === "VIP" ? 20 : 10;
+  const nickname = firstName.toLowerCase();
+
+  await db.collection("appointments").add({
+    nickname,
+    phone,
+    type,
+    price,
+    status: "waiting",
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  alert(`Appointment booked! You’ll pay $${price}`);
+  form.reset();
+  paymentAmount.textContent = "Payment: $0";
+});
+
+db.collection("appointments")
+  .orderBy("timestamp")
+  .onSnapshot(snapshot => {
+    const vipList = [];
+    const regularList = [];
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (data.status === "served") return;
+      if (data.type === "VIP") vipList.push(data);
+      else regularList.push(data);
+    });
+
+    const fullList = [...vipList, ...regularList];
+    queueList.innerHTML = "";
+    fullList.forEach((person, index) => {
+      const li = document.createElement("li");
+      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
+      queueList.appendChild(li);
+    });
+  });
