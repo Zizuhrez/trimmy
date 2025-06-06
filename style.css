@@ -73,7 +73,7 @@ input:focus, select:focus {
 }
 
 .serving {
-  color: #ffd700 ;
+  color: yellow ;
   font-weight: bold;
   text-transform: uppercase;
 }
