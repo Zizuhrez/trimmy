@@ -18,20 +18,17 @@ form.addEventListener("submit", async (e) => {
   const price = type === "VIP" ? 20 : 10;
   const nickname = firstName.toLowerCase();
 
-  // Generate 4-digit random PIN
-  const pin = Math.floor(1000 + Math.random() * 9000);
-
   await db.collection("appointments").add({
     nickname,
     phone,
     type,
     price,
-    pin, // Save the secret pin
     status: "waiting",
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  window.location.href = `confirmation.html?pin=${pin}`;
+  alert(`Appointment booked! You’ll pay $${price}`);
+  form.reset();
   paymentAmount.textContent = "Payment: $0";
 });
 
@@ -48,13 +45,11 @@ db.collection("appointments")
       else regularList.push(data);
     });
 
-  const fullList = [...vipList, ...regularList];
+    const fullList = [...vipList, ...regularList];
     queueList.innerHTML = "";
-   fullList.forEach((person, index) => {
-  const li = document.createElement("li");
-  const statusClass = person.status === "serving" ? "serving" : "waiting";
-  
-  li.innerHTML = `<span style="text-transform: lowercase;">${person.nickname}</span> <span class="${statusClass}">${person.status}</span>`;
-  
-  queueList.appendChild(li);
-});
+    fullList.forEach((person, index) => {
+      const li = document.createElement("li");
+      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
+      queueList.appendChild(li);
+    });
+  });
