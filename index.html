@@ -2,41 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Book Appointment</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
-  <script>
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCBZieIBuGS_ZTIQgedZCQgV5zg8KxexUQ",
-  authDomain: "trimmy-9befa.firebaseapp.com",
-  projectId: "trimmy-9befa",
-  storageBucket: "trimmy-9befa.firebasestorage.app",
-  messagingSenderId: "1004261096048",
-  appId: "1:1004261096048:web:b1919461d044a91f6892b5",
-  measurementId: "G-TCTDHB8SWL"
-};
-    firebase.initializeApp(firebaseConfig);
-  </script>
+  <script src="firebase.js"></script>
 </head>
 <body>
-  <h1>Trimmy Appointment Booking</h1>
-  <form id="bookingForm">
-    <input type="text" id="name" placeholder="Your Name" required />
-    <select id="appointmentType" required>
-      <option value="">Choose Type</option>
-      <option value="Regular">Regular</option>
-      <option value="VIP">VIP</option>
-    </select>
-    <button type="submit">Book</button>
-  </form>
+  <div class="container">
+    <h2>Book Appointment</h2>
+    <form id="bookingForm">
+      <input type="text" id="firstName" placeholder="First Name" required />
+      <input type="text" id="lastName" placeholder="Last Name" required />
+      <input type="tel" id="phone" placeholder="Phone Number" required />
+      
+      <select id="appointmentType" required>
+        <option value="">Select Type</option>
+        <option value="Regular">Regular ($10)</option>
+        <option value="VIP">VIP ($20)</option>
+      </select>
+      
+      <p id="paymentAmount">Payment: $0</p>
+      <button type="submit">Book Now</button>
+    </form>
 
-  <div id="queueSection" style="display:none;">
-    <h2>Queue List</h2>
+    <h3>Live Appointments</h3>
     <ul id="queueList"></ul>
-    <a href="staff.html"><button>Go to Staff Panel</button></a>
   </div>
 
   <script src="script.js"></script>
