@@ -2,35 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Book Appointment</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
-  <script src="firebase.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
 <body>
-  <div class="container">
-    <h2>Book Appointment</h2>
-    <form id="bookingForm">
-      <input type="text" id="firstName" placeholder="First Name" required />
-      <input type="text" id="lastName" placeholder="Last Name" required />
-      <input type="tel" id="phone" placeholder="Phone Number" required />
-      
-      <select id="appointmentType" required>
-        <option value="">Select Type</option>
-        <option value="Regular">Regular ($10)</option>
-        <option value="VIP">VIP ($20)</option>
-      </select>
-      
-      <p id="paymentAmount">Payment: $0</p>
-      <button type="submit">Book Now</button>
-    </form>
+  <h1>Trimmy Appointment Booking</h1>
+  <form id="bookingForm">
+    <input type="text" id="name" placeholder="Your Name" required />
+    <select id="appointmentType" required>
+      <option value="">Choose Type</option>
+      <option value="Regular">Regular</option>
+      <option value="VIP">VIP</option>
+    </select>
+    <button type="submit">Book</button>
+  </form>
 
-    <h3>Live Appointments</h3>
+  <div id="queueSection" style="display:none;">
+    <h2>Queue List</h2>
     <ul id="queueList"></ul>
-
-    <button onclick="window.location.href='staff.html'">Go to Staff Panel</button>
+    <a href="staff.html"><button>Go to Staff Panel</button></a>
   </div>
 
   <script src="script.js"></script>
