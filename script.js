@@ -31,8 +31,7 @@ form.addEventListener("submit", async (e) => {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  alert(`Appointment booked! You’ll pay $${price}. Your secret PIN is: ${pin}`);
-  form.reset();
+  window.location.href = `confirmation.html?pin=${pin}`;
   paymentAmount.textContent = "Payment: $0";
 });
 
