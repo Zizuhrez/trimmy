@@ -1,63 +1,28 @@
 body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(to right, #e3f2fd, #fce4ec);
-  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
   padding: 20px;
-  min-height: 100vh;
 }
-
 .container {
-  background: #ffffff;
-  max-width: 500px;
+  background: white;
+  max-width: 400px;
   margin: auto;
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  padding: 20px;
+  border-radius: 8px;
 }
-
-h2, h3 {
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 20px;
-}
-
 input, select, button {
   width: 100%;
-  margin: 12px 0;
-  padding: 14px;
+  margin: 10px 0;
+  padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-  outline: none;
-  transition: border-color 0.3s;
 }
-
-input:focus, select:focus {
-  border-color: #4a90e2;
-}
-
 button {
-  background: #4a90e2;
+  background: green;
   color: white;
   border: none;
-  font-weight: bold;
   cursor: pointer;
-  border-radius: 8px;
-  transition: background 0.3s ease;
 }
-
-button:hover {
-  background: #357ABD;
-}
-
-#queueList {
-  list-style: none;
-  padding: 0;
-}
-
-#staffAccess {
-  background: #e74c3c;
-  margin-top: 20px;
+.served {
+  background-color: lightgray;
+  text-decoration: line-through;
 }
