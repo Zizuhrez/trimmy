@@ -2,16 +2,13 @@ const form = document.getElementById("bookingForm");
 const appointmentType = document.getElementById("appointmentType");
 const paymentAmount = document.getElementById("paymentAmount");
 const queueList = document.getElementById("queueList");
-const staffAccess = document.getElementById("staffAccess");
 
-// Payment update
 appointmentType.addEventListener("change", () => {
   const type = appointmentType.value;
   paymentAmount.textContent = type === "VIP" ? "Payment: $20" :
                               type === "Regular" ? "Payment: $10" : "Payment: $0";
 });
 
-// Submit appointment
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const firstName = document.getElementById("firstName").value.trim();
@@ -21,34 +18,20 @@ form.addEventListener("submit", async (e) => {
   const price = type === "VIP" ? 20 : 10;
   const nickname = firstName.toLowerCase();
 
-  const pin = Math.floor(1000 + Math.random() * 9000); // Generate PIN
-
   await db.collection("appointments").add({
     nickname,
     phone,
     type,
     price,
-    pin,
     status: "waiting",
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  window.location.href = `confirmation.html?pin=${pin}`;
+  alert(`Appointment booked! You’ll pay $${price}`);
+  form.reset();
+  paymentAmount.textContent = "Payment: $0";
 });
 
-// Staff panel access with PIN prompt
-staffAccess.addEventListener("click", () => {
-  const enteredPin = prompt("Enter admin PIN to access staff panel:");
-  const correctPin = "2025"; // 🔒 Change this to your secret
-
-  if (enteredPin === correctPin) {
-    window.location.href = "staff.html";
-  } else {
-    alert("Wrong PIN. Access denied.");
-  }
-});
-
-// Live appointment list
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
