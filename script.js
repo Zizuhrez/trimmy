@@ -1,10 +1,19 @@
 const form = document.getElementById("bookingForm");
 const appointmentType = document.getElementById("appointmentType");
 const paymentAmount = document.getElementById("paymentAmount");
+const queueList = document.getElementById("queueList");
+const staffAccess = document.getElementById("staffAccess");
 
+// Payment update
+appointmentType.addEventListener("change", () => {
+  const type = appointmentType.value;
+  paymentAmount.textContent = type === "VIP" ? "Payment: $20" :
+                              type === "Regular" ? "Payment: $10" : "Payment: $0";
+});
+
+// Submit appointment
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   const firstName = document.getElementById("firstName").value.trim();
   const lastName = document.getElementById("lastName").value.trim();
   const phone = document.getElementById("phone").value.trim();
@@ -12,23 +21,34 @@ form.addEventListener("submit", async (e) => {
   const price = type === "VIP" ? 20 : 10;
   const nickname = firstName.toLowerCase();
 
-  const pin = Math.floor(1000 + Math.random() * 9000); // 🔐 Generate 4-digit PIN
+  const pin = Math.floor(1000 + Math.random() * 9000); // Generate PIN
 
   await db.collection("appointments").add({
     nickname,
-    type,
     phone,
+    type,
     price,
-    pin, // ✅ Save PIN with appointment
+    pin,
     status: "waiting",
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  alert(`Appointment booked! You’ll pay $${price}\nYour PIN: ${pin}\nKeep it safe — staff will need it.`);
-  form.reset();
-  paymentAmount.textContent = "Payment: $0";
+  window.location.href = `confirmation.html?pin=${pin}`;
 });
 
+// Staff panel access with PIN prompt
+staffAccess.addEventListener("click", () => {
+  const enteredPin = prompt("Enter admin PIN to access staff panel:");
+  const correctPin = "2025"; // 🔒 Change this to your secret
+
+  if (enteredPin === correctPin) {
+    window.location.href = "staff.html";
+  } else {
+    alert("Wrong PIN. Access denied.");
+  }
+});
+
+// Live appointment list
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
