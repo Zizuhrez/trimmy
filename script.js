@@ -48,7 +48,7 @@ db.collection("appointments")
       else regularList.push(data);
     });
 
-    const fullList = [...vipList, ...regularList];
+  const fullList = [...vipList, ...regularList];
     queueList.innerHTML = "";
    fullList.forEach((person, index) => {
   const li = document.createElement("li");
