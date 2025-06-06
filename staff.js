@@ -1,78 +1,40 @@
-const staffQueue = document.getElementById("staffQueue");
+const pinInput = document.getElementById("pinInput");
+const findButton = document.getElementById("findButton");
+const resultDiv = document.getElementById("result");
 
-function updateStatus(docId, newStatus) {
-  db.collection("appointments").doc(docId).update({ status: newStatus });
-}
+findButton.addEventListener("click", async () => {
+  const enteredPin = pinInput.value.trim();
+  if (!enteredPin) return alert("Please enter a PIN");
 
-db.collection("appointments")
-  .orderBy("timestamp")
-  .onSnapshot(snapshot => {
-    const vipList = [];
-    const regularList = [];
+  const snapshot = await db.collection("appointments").where("pin", "==", parseInt(enteredPin)).get();
 
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      data.id = doc.id;
-      if (data.type === "VIP") vipList.push(data);
-      else regularList.push(data);
-    });
+  if (snapshot.empty) {
+    resultDiv.innerHTML = "<p style='color:red;'>No appointment found with this PIN.</p>";
+    return;
+  }
 
-    const fullList = [...vipList, ...regularList];
-    staffQueue.innerHTML = "";
-    fullList.forEach((person, index) => {
-      const li = document.createElement("li");
-      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
+  const doc = snapshot.docs[0];
+  const data = doc.data();
 
-      if (person.status === "waiting") {
-  // Serve with PIN
-  const serveBtn = document.createElement("button");
-  serveBtn.textContent = "Serving";
-  serveBtn.onclick = () => {
-    const inputPin = prompt("Enter customer's 4-digit PIN:");
-    if (inputPin === String(person.pin)) {
-      updateStatus(person.id, "serving");
-    } else {
-      alert("Incorrect PIN. You cannot serve this customer.");
-    }
-  };
-  li.appendChild(serveBtn);
+  resultDiv.innerHTML = `
+    <p><strong>Customer:</strong> ${data.nickname}</p>
+    <p><strong>Type:</strong> ${data.type}</p>
+    <p><strong>Status:</strong> ${data.status}</p>
+    <button id="markServing">Mark as Serving</button>
+    <button id="markDone">Mark as Done</button>
+  `;
 
-  // Show PIN (hidden by default)
-  const showPinBtn = document.createElement("button");
-  showPinBtn.textContent = "👁 Show PIN";
-  const pinSpan = document.createElement("span");
-  pinSpan.textContent = `PIN: ${person.pin}`;
-  pinSpan.style.display = "none";
-  pinSpan.style.marginLeft = "10px";
-  showPinBtn.onclick = () => {
-    pinSpan.style.display = pinSpan.style.display === "none" ? "inline" : "none";
-  };
-  li.appendChild(showPinBtn);
-  li.appendChild(pinSpan);
-
-  // Override PIN (use carefully)
-  const overrideBtn = document.createElement("button");
-  overrideBtn.textContent = "Override PIN";
-  overrideBtn.onclick = () => {
-    if (confirm("Are you sure you want to override the PIN check for this customer?")) {
-      updateStatus(person.id, "serving");
-    }
-  };
-  li.appendChild(overrideBtn);
-}
-
-      if (person.status === "serving") {
-        const servedBtn = document.createElement("button");
-        servedBtn.textContent = "Mark as Served";
-        servedBtn.onclick = () => updateStatus(person.id, "served");
-        li.appendChild(servedBtn);
-        li.style.background = "#fff5d1";
-      }
-
-      if (person.status === "served") {
-        li.classList.add("served");
-      }
-
-      staffQueue.appendChild(li);
-    });
+  document.getElementById("markServing").addEventListener("click", async () => {
+    await db.collection("appointments").doc(doc.id).update({ status: "serving" });
+    alert("Status updated to 'serving'");
+    pinInput.value = "";
+    resultDiv.innerHTML = "";
   });
+
+  document.getElementById("markDone").addEventListener("click", async () => {
+    await db.collection("appointments").doc(doc.id).update({ status: "served" });
+    alert("Appointment marked as done");
+    pinInput.value = "";
+    resultDiv.innerHTML = "";
+  });
+});
