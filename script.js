@@ -1,13 +1,6 @@
 const form = document.getElementById("bookingForm");
 const appointmentType = document.getElementById("appointmentType");
 const paymentAmount = document.getElementById("paymentAmount");
-const queueList = document.getElementById("queueList");
-
-appointmentType.addEventListener("change", () => {
-  const type = appointmentType.value;
-  paymentAmount.textContent = type === "VIP" ? "Payment: $20" :
-                              type === "Regular" ? "Payment: $10" : "Payment: $0";
-});
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
