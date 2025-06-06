@@ -1,112 +1,84 @@
 body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(to right, #e3f2fd, #fce4ec);
   margin: 0;
-  padding: 20px;
-  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  background-color: #0d0d0d;
+  color: white;
 }
 
 .container {
-  background: #ffffff;
-  max-width: 500px;
-  margin: auto;
+  max-width: 400px;
+  margin: 40px auto;
   padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-h2, h3 {
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 20px;
-}
-
-input, select, button {
-  width: 100%;
-  margin: 12px 0;
-  padding: 14px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-sizing: border-box;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-input:focus, select:focus {
-  border-color: #4a90e2;
+  background-color: #111;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
 }
 
 button {
-  background: #4a90e2;
-  color: white;
+  background: linear-gradient(to right, #b48a33, #5c3c00);
   border: none;
+  color: white;
   font-weight: bold;
+  padding: 14px;
+  width: 100%;
+  border-radius: 10px;
+  font-size: 17px;
   cursor: pointer;
-  border-radius: 8px;
-  transition: background 0.3s ease;
+  margin-top: 15px;
+  transition: 0.3s ease;
 }
 
 button:hover {
-  background: #357ABD;
+  background: linear-gradient(to right, #cc9f3b, #704e00);
+}
+
+h2, h3 {
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+}
+
+input, select {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  margin-top: 12px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  font-size: 16px;
+  background-color: #222;
+  color: white;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border: 2px solid #b48a33;
+}
+
+#paymentAmount {
+  color: #ccc;
+  margin: 10px 0;
 }
 
 #queueList {
+  margin-top: 20px;
   list-style: none;
   padding: 0;
 }
 
-.appointment-card {
-  background: #f9f9f9;
-  border-left: 6px solid #2196f3;
-  margin-bottom: 16px;
-  padding: 14px 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.2s;
-}
-
-.appointment-card:hover {
-  transform: translateY(-2px);
-}
-
-.appointment-info {
-  flex-grow: 1;
-}
-
-.status-badge {
-  padding: 8px 12px;
-  border-radius: 6px;
-  color: white;
-  font-size: 14px;
+#queueList li {
+  font-size: 18px;
   font-weight: bold;
-  text-transform: capitalize;
-}
-
-.waiting {
-  background: #ff9800;
+  padding: 8px 0;
 }
 
 .serving {
-  background: #4caf50;
-}
-
-.served {
-  background: #9e9e9e;
-  text-decoration: line-through;
-}
-
-.nickname {
+  color: #f5d27f;
   font-weight: bold;
-  font-size: 17px;
-  color: #2d3436;
+  text-transform: uppercase;
 }
 
-.type {
-  font-size: 15px;
-  color: #636e72;
+.waiting {
+  color: white;
+  text-transform: lowercase;
 }
