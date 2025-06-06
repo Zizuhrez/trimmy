@@ -1,40 +1,40 @@
-const pinInput = document.getElementById("pinInput");
-const findButton = document.getElementById("findButton");
-const resultDiv = document.getElementById("result");
+const queueList = document.getElementById("queueList");
+const db = firebase.firestore();
 
-findButton.addEventListener("click", async () => {
-  const enteredPin = pinInput.value.trim();
-  if (!enteredPin) return alert("Please enter a PIN");
+function renderQueue() {
+  queueList.innerHTML = ""; // Clear list before rendering
 
-  const snapshot = await db.collection("appointments").where("pin", "==", parseInt(enteredPin)).get();
+  db.collection("appointments")
+    .orderBy("timestamp", "asc")
+    .onSnapshot((snapshot) => {
+      queueList.innerHTML = ""; // Reset each time data updates
 
-  if (snapshot.empty) {
-    resultDiv.innerHTML = "<p style='color:red;'>No appointment found with this PIN.</p>";
-    return;
-  }
+      snapshot.forEach((doc) => {
+        const data = doc.data();
+        const li = document.createElement("li");
 
-  const doc = snapshot.docs[0];
-  const data = doc.data();
+        li.textContent = `${data.name} - ${data.type} - Status: ${data.status}`;
 
-  resultDiv.innerHTML = `
-    <p><strong>Customer:</strong> ${data.nickname}</p>
-    <p><strong>Type:</strong> ${data.type}</p>
-    <p><strong>Status:</strong> ${data.status}</p>
-    <button id="markServing">Mark as Serving</button>
-    <button id="markDone">Mark as Done</button>
-  `;
+        if (data.status === "waiting") {
+          const serveButton = document.createElement("button");
+          serveButton.textContent = "Serve";
+          serveButton.onclick = () => {
+            const enteredPIN = prompt("Enter customer's PIN:");
+            if (enteredPIN === data.pin) {
+              db.collection("appointments").doc(doc.id).update({
+                status: "serving"
+              });
+              alert("Customer is now being served.");
+            } else {
+              alert("Incorrect PIN!");
+            }
+          };
+          li.appendChild(serveButton);
+        }
 
-  document.getElementById("markServing").addEventListener("click", async () => {
-    await db.collection("appointments").doc(doc.id).update({ status: "serving" });
-    alert("Status updated to 'serving'");
-    pinInput.value = "";
-    resultDiv.innerHTML = "";
-  });
+        queueList.appendChild(li);
+      });
+    });
+}
 
-  document.getElementById("markDone").addEventListener("click", async () => {
-    await db.collection("appointments").doc(doc.id).update({ status: "served" });
-    alert("Appointment marked as done");
-    pinInput.value = "";
-    resultDiv.innerHTML = "";
-  });
-});
+renderQueue();
