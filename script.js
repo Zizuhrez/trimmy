@@ -50,9 +50,11 @@ db.collection("appointments")
 
     const fullList = [...vipList, ...regularList];
     queueList.innerHTML = "";
-    fullList.forEach((person, index) => {
-      const li = document.createElement("li");
-      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
-      queueList.appendChild(li);
-    });
-  });
+   fullList.forEach((person, index) => {
+  const li = document.createElement("li");
+  const statusClass = person.status === "serving" ? "serving" : "waiting";
+  
+  li.innerHTML = `<span style="text-transform: lowercase;">${person.nickname}</span> <span class="${statusClass}">${person.status}</span>`;
+  
+  queueList.appendChild(li);
+});
