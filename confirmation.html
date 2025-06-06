@@ -3,42 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <title>Confirmation</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 100px;
-    }
-    .pin-box {
-      background-color: #f2f2f2;
-      display: inline-block;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .pin {
-      font-size: 2em;
-      color: #333;
-      margin-top: 10px;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>Appointment Confirmed ✅</h1>
-  <div class="pin-box">
-    <p>Your PIN:</p>
-    <div class="pin" id="pinDisplay">Loading...</div>
-    <p>Show this PIN to the barber when you arrive.</p>
-  </div>
+  <p><strong>Name:</strong> <span id="confirmName"></span></p>
+  <p><strong>Type:</strong> <span id="confirmType"></span></p>
+  <p><strong>Your PIN:</strong> <span id="confirmPIN"></span></p>
+  <a href="customer.html">Back to Booking</a>
 
   <script>
-    const pinDisplay = document.getElementById("pinDisplay");
-    const storedPIN = localStorage.getItem("appointmentPIN");
+    const name = localStorage.getItem("appointmentName");
+    const type = localStorage.getItem("appointmentType");
+    const pin = localStorage.getItem("appointmentPIN");
 
-    if (storedPIN) {
-      pinDisplay.textContent = storedPIN;
-    } else {
-      pinDisplay.textContent = "Error: PIN not found.";
-    }
+    document.getElementById("confirmName").textContent = name;
+    document.getElementById("confirmType").textContent = type;
+    document.getElementById("confirmPIN").textContent = pin;
   </script>
 </body>
 </html>
