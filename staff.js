@@ -1,36 +1,47 @@
-const queueList = document.getElementById("queueList");
-const db = firebase.firestore();
+const staffQueue = document.getElementById("staffQueue");
 
-function renderQueue() {
-  db.collection("appointments")
-    .orderBy("timestamp", "asc")
-    .onSnapshot((snapshot) => {
-      queueList.innerHTML = "";
-
-      snapshot.forEach((doc) => {
-        const data = doc.data();
-        const li = document.createElement("li");
-        li.textContent = `${data.name} - ${data.type} - Status: ${data.status}`;
-
-        if (data.status === "waiting") {
-          const serveBtn = document.createElement("button");
-          serveBtn.textContent = "Serve";
-          serveBtn.onclick = () => {
-            const enteredPIN = prompt("Enter customer PIN:");
-            if (enteredPIN === data.pin) {
-              db.collection("appointments").doc(doc.id).update({
-                status: "serving"
-              });
-            } else {
-              alert("❌ Incorrect PIN. Cannot serve.");
-            }
-          };
-          li.appendChild(serveBtn);
-        }
-
-        queueList.appendChild(li);
-      });
-    });
+function updateStatus(docId, newStatus) {
+  db.collection("appointments").doc(docId).update({ status: newStatus });
 }
 
-renderQueue();
+db.collection("appointments")
+  .orderBy("timestamp")
+  .onSnapshot(snapshot => {
+    const vipList = [];
+    const regularList = [];
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      data.id = doc.id;
+      if (data.type === "VIP") vipList.push(data);
+      else regularList.push(data);
+    });
+
+    const fullList = [...vipList, ...regularList];
+    staffQueue.innerHTML = "";
+    fullList.forEach((person, index) => {
+      const li = document.createElement("li");
+      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
+
+      if (person.status === "waiting") {
+        const serveBtn = document.createElement("button");
+        serveBtn.textContent = "Serving";
+        serveBtn.onclick = () => updateStatus(person.id, "serving");
+        li.appendChild(serveBtn);
+      }
+
+      if (person.status === "serving") {
+        const servedBtn = document.createElement("button");
+        servedBtn.textContent = "Mark as Served";
+        servedBtn.onclick = () => updateStatus(person.id, "served");
+        li.appendChild(servedBtn);
+        li.style.background = "#fff5d1";
+      }
+
+      if (person.status === "served") {
+        li.classList.add("served");
+      }
+
+      staffQueue.appendChild(li);
+    });
+  });
