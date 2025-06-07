@@ -19,7 +19,10 @@ db.collection("appointments")
 
     fullList.forEach((person, index) => {
       const li = document.createElement("li");
-      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status} `;
+      li.innerHTML = `${index + 1}. <strong>${person.nickname}</strong> - ${person.type} - 
+  <span style="color: ${person.status === 'serving' ? 'green' : 'black'};">
+    ${person.status}
+  </span>`;
 
       // 👇 Serve Button
       const serveBtn = document.createElement("button");
@@ -40,6 +43,18 @@ db.collection("appointments")
       };
 
       li.appendChild(serveBtn);
-      staffList.appendChild(li);
+
+if (person.status === "serving") {
+  const doneBtn = document.createElement("button");
+  doneBtn.textContent = "Done";
+  doneBtn.style.marginLeft = "10px";
+  doneBtn.onclick = async () => {
+    await db.collection("appointments").doc(person.id).update({
+      status: "served"
     });
-  });
+    alert(`${person.nickname} marked as served ✅`);
+  };
+  li.appendChild(doneBtn);
+}
+
+staffList.appendChild(li);
