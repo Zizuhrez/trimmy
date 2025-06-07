@@ -1,4 +1,8 @@
-const staffList = document.getElementById("staffQueue");
+const staffQueue = document.getElementById("staffQueue");
+
+function updateStatus(docId, newStatus) {
+  db.collection("appointments").doc(docId).update({ status: newStatus });
+}
 
 db.collection("appointments")
   .orderBy("timestamp")
@@ -8,53 +12,36 @@ db.collection("appointments")
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      data.id = doc.id; // save doc ID to update later
-      if (data.status === "served") return;
+      data.id = doc.id;
       if (data.type === "VIP") vipList.push(data);
       else regularList.push(data);
     });
 
     const fullList = [...vipList, ...regularList];
-    staffList.innerHTML = "";
-
+    staffQueue.innerHTML = "";
     fullList.forEach((person, index) => {
       const li = document.createElement("li");
-      li.innerHTML = `${index + 1}. <strong>${person.nickname}</strong> - ${person.type} - 
-  <span style="color: ${person.status === 'serving' ? 'green' : 'black'};">
-    ${person.status}
-  </span>`;
+      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
 
-      // 👇 Serve Button
-      const serveBtn = document.createElement("button");
-      serveBtn.textContent = "Serve";
-      serveBtn.onclick = async () => {
-        const enteredPIN = prompt("Enter customer PIN:");
+      if (person.status === "waiting") {
+        const serveBtn = document.createElement("button");
+        serveBtn.textContent = "Serving";
+        serveBtn.onclick = () => updateStatus(person.id, "serving");
+        li.appendChild(serveBtn);
+      }
 
-        if (enteredPIN === String(person.pin)) {
-          // ✅ Correct PIN → update status to "serving"
-          await db.collection("appointments").doc(person.id).update({
-            status: "serving"
-          });
-          alert(`✅ Now serving ${person.nickname}`);
-        } else {
-          // ❌ Incorrect PIN
-          alert("❌ Incorrect PIN. Cannot serve this customer.");
-        }
-      };
+      if (person.status === "serving") {
+        const servedBtn = document.createElement("button");
+        servedBtn.textContent = "Mark as Served";
+        servedBtn.onclick = () => updateStatus(person.id, "served");
+        li.appendChild(servedBtn);
+        li.style.background = "#fff5d1";
+      }
 
-      li.appendChild(serveBtn);
+      if (person.status === "served") {
+        li.classList.add("served");
+      }
 
-if (person.status === "serving") {
-  const doneBtn = document.createElement("button");
-  doneBtn.textContent = "Done";
-  doneBtn.style.marginLeft = "10px";
-  doneBtn.onclick = async () => {
-    await db.collection("appointments").doc(person.id).update({
-      status: "served"
+      staffQueue.appendChild(li);
     });
-    alert(`${person.nickname} marked as served ✅`);
-  };
-  li.appendChild(doneBtn);
-}
-
-staffList.appendChild(li);
+  });
