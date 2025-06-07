@@ -3,12 +3,14 @@ const appointmentType = document.getElementById("appointmentType");
 const paymentAmount = document.getElementById("paymentAmount");
 const queueList = document.getElementById("queueList");
 
+// Handle payment text on type change
 appointmentType.addEventListener("change", () => {
   const type = appointmentType.value;
   paymentAmount.textContent = type === "VIP" ? "Payment: $20" :
                               type === "Regular" ? "Payment: $10" : "Payment: $0";
 });
 
+// Handle appointment booking
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const firstName = document.getElementById("firstName").value.trim();
@@ -17,21 +19,24 @@ form.addEventListener("submit", async (e) => {
   const type = appointmentType.value;
   const price = type === "VIP" ? 20 : 10;
   const nickname = firstName.toLowerCase();
+  const pin = Math.floor(1000 + Math.random() * 9000);
 
-  const pin = Math.floor(1000 + Math.random() * 9000); // 🔐 generate 4-digit PIN
+  // Save to Firestore
+  await db.collection("appointments").add({
+    nickname,
+    phone,
+    type,
+    price,
+    pin,
+    status: "waiting",
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
 
-await db.collection("appointments").add({
-  nickname,
-  phone,
-  type,
-  price,
-  pin, // ✅ save PIN in Firestore
-  status: "waiting",
-  timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  // Redirect to confirmation with PIN
+  window.location.href = `confirmation.html?pin=${pin}`;
 });
 
-window.location.href = `confirmation.html?pin=${pin}`; // ✅ redirect to confirmation page
-
+// ✅ This part must be OUTSIDE the submit listener!
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
