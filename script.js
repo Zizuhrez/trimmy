@@ -18,19 +18,19 @@ form.addEventListener("submit", async (e) => {
   const price = type === "VIP" ? 20 : 10;
   const nickname = firstName.toLowerCase();
 
-  await db.collection("appointments").add({
-    nickname,
-    phone,
-    type,
-    price,
-    status: "waiting",
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  });
+  const pin = Math.floor(1000 + Math.random() * 9000); // 🔐 generate 4-digit PIN
 
-  alert(`Appointment booked! You’ll pay $${price}`);
-  form.reset();
-  paymentAmount.textContent = "Payment: $0";
+await db.collection("appointments").add({
+  nickname,
+  phone,
+  type,
+  price,
+  pin, // ✅ save PIN in Firestore
+  status: "waiting",
+  timestamp: firebase.firestore.FieldValue.serverTimestamp()
 });
+
+window.location.href = `confirmation.html?pin=${pin}`; // ✅ redirect to confirmation page
 
 db.collection("appointments")
   .orderBy("timestamp")
