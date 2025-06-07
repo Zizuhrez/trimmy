@@ -1,8 +1,4 @@
-const staffQueue = document.getElementById("staffQueue");
-
-function updateStatus(docId, newStatus) {
-  db.collection("appointments").doc(docId).update({ status: newStatus });
-}
+const staffList = document.getElementById("staffQueue");
 
 db.collection("appointments")
   .orderBy("timestamp")
@@ -12,36 +8,34 @@ db.collection("appointments")
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      data.id = doc.id;
+      data.id = doc.id; // save ID for later
+      if (data.status === "served") return;
       if (data.type === "VIP") vipList.push(data);
       else regularList.push(data);
     });
 
     const fullList = [...vipList, ...regularList];
-    staffQueue.innerHTML = "";
+    staffList.innerHTML = "";
     fullList.forEach((person, index) => {
       const li = document.createElement("li");
-      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
+      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status} `;
 
-      if (person.status === "waiting") {
-        const serveBtn = document.createElement("button");
-        serveBtn.textContent = "Serving";
-        serveBtn.onclick = () => updateStatus(person.id, "serving");
-        li.appendChild(serveBtn);
-      }
+      // Add Serve button
+      const serveBtn = document.createElement("button");
+      serveBtn.textContent = "Serve";
+      serveBtn.onclick = async () => {
+        const enteredPIN = prompt("Enter customer PIN:");
+        if (enteredPIN === String(person.pin)) {
+          await db.collection("appointments").doc(person.id).update({
+            status: "serving"
+          });
+          alert(`Now serving ${person.nickname}`);
+        } else {
+          alert("Incorrect PIN ❌");
+        }
+      };
 
-      if (person.status === "serving") {
-        const servedBtn = document.createElement("button");
-        servedBtn.textContent = "Mark as Served";
-        servedBtn.onclick = () => updateStatus(person.id, "served");
-        li.appendChild(servedBtn);
-        li.style.background = "#fff5d1";
-      }
-
-      if (person.status === "served") {
-        li.classList.add("served");
-      }
-
-      staffQueue.appendChild(li);
+      li.appendChild(serveBtn);
+      staffList.appendChild(li);
     });
   });
