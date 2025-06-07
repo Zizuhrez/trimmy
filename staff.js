@@ -8,7 +8,7 @@ db.collection("appointments")
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      data.id = doc.id; // save ID for later
+      data.id = doc.id; // save doc ID to update later
       if (data.status === "served") return;
       if (data.type === "VIP") vipList.push(data);
       else regularList.push(data);
@@ -16,22 +16,26 @@ db.collection("appointments")
 
     const fullList = [...vipList, ...regularList];
     staffList.innerHTML = "";
+
     fullList.forEach((person, index) => {
       const li = document.createElement("li");
       li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status} `;
 
-      // Add Serve button
+      // 👇 Serve Button
       const serveBtn = document.createElement("button");
       serveBtn.textContent = "Serve";
       serveBtn.onclick = async () => {
         const enteredPIN = prompt("Enter customer PIN:");
+
         if (enteredPIN === String(person.pin)) {
+          // ✅ Correct PIN → update status to "serving"
           await db.collection("appointments").doc(person.id).update({
             status: "serving"
           });
-          alert(`Now serving ${person.nickname}`);
+          alert(`✅ Now serving ${person.nickname}`);
         } else {
-          alert("Incorrect PIN ❌");
+          // ❌ Incorrect PIN
+          alert("❌ Incorrect PIN. Cannot serve this customer.");
         }
       };
 
