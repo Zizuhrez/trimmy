@@ -12,14 +12,39 @@
   <p><strong>Your PIN:</strong> <span id="confirmPIN"></span></p>
   <a href="customer.html">Back to Booking</a>
 
-  <script>
-    const name = localStorage.getItem("appointmentName");
-    const type = localStorage.getItem("appointmentType");
-    const pin = localStorage.getItem("appointmentPIN");
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
-    document.getElementById("confirmName").textContent = name;
-    document.getElementById("confirmType").textContent = type;
-    document.getElementById("confirmPIN").textContent = pin;
-  </script>
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const params = new URLSearchParams(window.location.search);
+  const pin = params.get("pin");
+
+  document.getElementById("confirmPIN").textContent = pin;
+
+  const appointmentsRef = collection(db, "appointments");
+  const q = query(appointmentsRef, where("pin", "==", parseInt(pin)));
+
+  const snapshot = await getDocs(q);
+  if (!snapshot.empty) {
+    const data = snapshot.docs[0].data();
+    document.getElementById("confirmName").textContent = data.nickname;
+    document.getElementById("confirmType").textContent = data.type;
+  } else {
+    document.getElementById("confirmName").textContent = "Not found";
+    document.getElementById("confirmType").textContent = "-";
+  }
+</script>
 </body>
 </html>
