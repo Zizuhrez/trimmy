@@ -57,4 +57,4 @@ db.collection("appointments")
       li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
       queueList.appendChild(li);
     });
-  });
+  }); 
