@@ -58,3 +58,14 @@ db.collection("appointments")
       queueList.appendChild(li);
     });
   }); 
+  
+  document.getElementById("goToStaff").addEventListener("click", () => {
+  const staffPin = prompt("Enter staff PIN:");
+  const correctPin = "2025"; // 🔒 Set your secret PIN here
+
+  if (staffPin === correctPin) {
+    window.location.href = "staff.html";
+  } else {
+    alert("Incorrect PIN. Access denied.");
+  }
+});
