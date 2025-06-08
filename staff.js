@@ -1,3 +1,10 @@
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    // If not logged in, send back to login page
+    window.location.href = "login.html";
+  }
+});
+
 const staffQueue = document.getElementById("staffQueue");
 
 function updateStatus(docId, newStatus) {
