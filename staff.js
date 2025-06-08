@@ -45,4 +45,3 @@ db.collection("appointments")
       staffQueue.appendChild(li);
     });
   });
-  
