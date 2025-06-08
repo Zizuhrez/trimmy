@@ -76,6 +76,6 @@ db.collection("appointments")
 
 function logout() {
   firebase.auth().signOut().then(() => {
-    window.location.href = "login.html";
+    window.location.href = "Login.html";
   });
 }
