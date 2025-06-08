@@ -46,23 +46,3 @@ db.collection("appointments")
     });
   });
   
-  document.getElementById("clearServedBtn").addEventListener("click", () => {
-  if (confirm("Are you sure you want to delete all served customers?")) {
-    db.collection("appointments")
-      .where("status", "==", "served")
-      .get()
-      .then(snapshot => {
-        const batch = db.batch();
-        snapshot.forEach(doc => {
-          batch.delete(doc.ref);
-        });
-        return batch.commit();
-      })
-      .then(() => {
-        alert("All served customers cleared.");
-      })
-      .catch(error => {
-        console.error("Error clearing served customers:", error);
-      });
-  }
-});
