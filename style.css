@@ -26,3 +26,19 @@ button {
   background-color: lightgray;
   text-decoration: line-through;
 }
+
+.logout-btn {
+  border: 2px solid #ff0000; /* 2px thick, red color */
+  border-radius: 6px;        /* Rounded corners */
+  padding: 10px 20px;        /* Button size */
+  background-color: white;
+  color: #ff0000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #ff0000;
+  color: white;
+}
