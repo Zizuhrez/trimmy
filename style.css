@@ -27,7 +27,7 @@ button {
   text-decoration: line-through;
 }
 
-.logout {
+.logout-btn {
   border: 2px solid #ff0000; /* 2px thick, red color */
   border-radius: 6px;        /* Rounded corners */
   padding: 10px 20px;        /* Button size */
