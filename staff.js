@@ -33,16 +33,30 @@ db.collection("appointments")
       if (person.status === "waiting") {
         const serveBtn = document.createElement("button");
         serveBtn.textContent = "Serving";
-        
+
+        // ✅ Ask for PIN before marking as serving
         serveBtn.onclick = () => {
-  const enteredPin = prompt("Enter customer PIN:");
-  if (enteredPin === person.pin) {
-    updateStatus(person.id, "serving");
-  } else {
-    alert("Incorrect PIN. Cannot proceed.");
-  }
-};
-        
+          const enteredPin = prompt("Enter customer PIN:");
+          if (!enteredPin) return;
+
+          // Fetch the latest PIN from Firestore
+          db.collection("appointments").doc(person.id).get().then(doc => {
+            if (doc.exists) {
+              const appointmentData = doc.data();
+              if (appointmentData.pin === enteredPin) {
+                updateStatus(person.id, "serving");
+              } else {
+                alert("❌ Incorrect PIN. Cannot proceed.");
+              }
+            } else {
+              alert("❌ Appointment not found.");
+            }
+          }).catch(error => {
+            console.error("Error verifying PIN:", error);
+            alert("⚠️ Error checking PIN.");
+          });
+        };
+
         li.appendChild(serveBtn);
       }
 
@@ -61,8 +75,9 @@ db.collection("appointments")
       staffQueue.appendChild(li);
     });
   });
-  
-  document.getElementById("clearServedBtn").addEventListener("click", () => {
+
+// ✅ Clear served customers
+document.getElementById("clearServedBtn").addEventListener("click", () => {
   if (confirm("Are you sure you want to delete all served customers?")) {
     db.collection("appointments")
       .where("status", "==", "served")
@@ -75,14 +90,16 @@ db.collection("appointments")
         return batch.commit();
       })
       .then(() => {
-        alert("All served customers cleared.");
+        alert("✅ All served customers cleared.");
       })
       .catch(error => {
         console.error("Error clearing served customers:", error);
+        alert("⚠️ Failed to clear served customers.");
       });
   }
 });
 
+// ✅ Logout button
 function logout() {
   firebase.auth().signOut().then(() => {
     window.location.href = "login.html";
