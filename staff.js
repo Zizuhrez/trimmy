@@ -28,7 +28,18 @@ db.collection("appointments")
     staffQueue.innerHTML = "";
     fullList.forEach((person, index) => {
       const li = document.createElement("li");
-      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
+      li.innerHTML = `<strong>${index + 1}. ${person.nickname} - ${person.type} - ${person.status}</strong>`;
+
+if (index === 0 && person.status === "serving") {
+  const badge = document.createElement("span");
+  badge.textContent = "⭐ Currently Serving";
+  badge.style.marginLeft = "10px";
+  badge.style.color = "#d97706";
+  badge.style.fontWeight = "bold";
+  li.appendChild(badge);
+  li.style.border = "2px solid #facc15";
+  li.style.backgroundColor = "#fffbe6";
+}
 
       if (person.status === "waiting") {
         const serveBtn = document.createElement("button");
