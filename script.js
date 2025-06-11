@@ -56,15 +56,29 @@ db.collection("appointments")
     queueList.innerHTML = "";
     fullList.forEach((person, index) => {
       const li = document.createElement("li");
-      li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
+      li.classList.add("queue-item");
+
+      let content = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
+
+      // Style by status
+      if (person.status === "serving") {
+        content += ` <span class="serving-badge">⭐ Currently Serving</span>`;
+        li.style.backgroundColor = "#fff5d1"; // Yellow
+        li.style.borderLeft = "5px solid #facc15";
+      } else if (person.status === "waiting") {
+        li.style.backgroundColor = "#e0f2fe"; // Light blue
+        li.style.borderLeft = "5px solid #3b82f6";
+      }
+
+      li.innerHTML = content;
       queueList.appendChild(li);
     });
   });
 
-// ✅ Staff access button
+// ✅ Staff access with PIN
 document.getElementById("goToStaff").addEventListener("click", () => {
   const staffPin = prompt("Enter staff PIN:");
-  const correctPin = "2025"; // Change this to your desired staff access PIN
+  const correctPin = "2025"; // Change this if needed
 
   if (staffPin === correctPin) {
     window.location.href = "staff.html";
