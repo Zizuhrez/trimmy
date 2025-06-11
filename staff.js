@@ -1,92 +1,103 @@
-const form = document.getElementById("bookingForm");
-const appointmentType = document.getElementById("appointmentType");
-const paymentAmount = document.getElementById("paymentAmount");
-const queueList = document.getElementById("queueList");
-
-// Update payment text
-appointmentType.addEventListener("change", () => {
-  const type = appointmentType.value;
-  paymentAmount.textContent = type === "VIP" ? "Payment: $20" :
-                              type === "Regular" ? "Payment: $10" : "Payment: $0";
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
 });
 
-// Booking form submission
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const firstName = document.getElementById("firstName").value.trim();
-  const lastName = document.getElementById("lastName").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const type = appointmentType.value;
-  const price = type === "VIP" ? 20 : 10;
-  const nickname = firstName.toLowerCase();
+const staffQueue = document.getElementById("staffQueue");
 
-  const pin = Math.floor(1000 + Math.random() * 9000).toString();
+function updateStatus(docId, newStatus) {
+  db.collection("appointments").doc(docId).update({ status: newStatus });
+}
 
-  await db.collection("appointments").add({
-    nickname,
-    phone,
-    type,
-    price,
-    pin,
-    status: "waiting",
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  window.location.href = `confirmation.html?pin=${pin}`;
-});
-
-// Real-time queue display
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
     const servingList = [];
-    const waitingVipList = [];
-    const waitingRegularList = [];
+    const vipList = [];
+    const regularList = [];
 
     snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.status === "served") return;
+      data.id = doc.id;
 
       if (data.status === "serving") {
         servingList.push(data);
-      } else if (data.type === "VIP") {
-        waitingVipList.push(data);
-      } else {
-        waitingRegularList.push(data);
+      } else if (data.status === "waiting" && data.type === "VIP") {
+        vipList.push(data);
+      } else if (data.status === "waiting" && data.type === "Regular") {
+        regularList.push(data);
       }
     });
 
-    const fullList = [...servingList, ...waitingVipList, ...waitingRegularList];
-    queueList.innerHTML = "";
+    const fullList = [...servingList, ...vipList, ...regularList];
+    staffQueue.innerHTML = "";
 
     fullList.forEach((person, index) => {
       const li = document.createElement("li");
       li.classList.add("queue-item");
 
-      let content = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
+      li.innerHTML = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
 
-      if (person.status === "serving") {
-        content += ` <span class="serving-badge">⭐ Serving</span>`;
-        li.style.backgroundColor = "#fff5d1";
-        li.style.borderLeft = "5px solid #facc15";
-      } else if (person.status === "waiting") {
+      // Add Serving button with PIN check
+      if (person.status === "waiting") {
+        const serveBtn = document.createElement("button");
+        serveBtn.textContent = "Serving";
+
+        serveBtn.onclick = () => {
+          const enteredPin = prompt("Enter customer PIN:");
+          if (enteredPin === person.pin.toString()) {
+            updateStatus(person.id, "serving");
+          } else {
+            alert("Incorrect PIN. Cannot proceed.");
+          }
+        };
+
+        li.appendChild(serveBtn);
         li.style.backgroundColor = "#e0f2fe";
         li.style.borderLeft = "5px solid #3b82f6";
       }
 
-      li.innerHTML = content;
-      queueList.appendChild(li);
+      // Add Mark as Served button
+      if (person.status === "serving") {
+        const servedBtn = document.createElement("button");
+        servedBtn.textContent = "Mark as Served";
+        servedBtn.onclick = () => updateStatus(person.id, "served");
+        li.appendChild(servedBtn);
+
+        li.style.backgroundColor = "#fff5d1";
+        li.style.borderLeft = "5px solid #facc15";
+      }
+
+      staffQueue.appendChild(li);
     });
   });
 
-// Staff panel access
-document.getElementById("goToStaff").addEventListener("click", () => {
-  const staffPin = prompt("Enter staff PIN:");
-  const correctPin = "2025";
-
-  if (staffPin === correctPin) {
-    window.location.href = "staff.html";
-  } else {
-    alert("Incorrect PIN. Access denied.");
+// Clear all served customers
+document.getElementById("clearServedBtn").addEventListener("click", () => {
+  if (confirm("Are you sure you want to delete all served customers?")) {
+    db.collection("appointments")
+      .where("status", "==", "served")
+      .get()
+      .then(snapshot => {
+        const batch = db.batch();
+        snapshot.forEach(doc => {
+          batch.delete(doc.ref);
+        });
+        return batch.commit();
+      })
+      .then(() => {
+        alert("All served customers cleared.");
+      })
+      .catch(error => {
+        console.error("Error clearing served customers:", error);
+      });
   }
 });
+
+// Logout button
+function logout() {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "login.html";
+  });
+}
