@@ -19,9 +19,11 @@ form.addEventListener("submit", async (e) => {
   const type = appointmentType.value;
   const price = type === "VIP" ? 20 : 10;
   const nickname = firstName.toLowerCase();
-  const pin = Math.floor(1000 + Math.random() * 9000);
 
-  // Save to Firestore
+  // ✅ Generate 4-digit PIN
+  const pin = Math.floor(1000 + Math.random() * 9000).toString();
+
+  // ✅ Save to Firestore
   await db.collection("appointments").add({
     nickname,
     phone,
@@ -32,11 +34,11 @@ form.addEventListener("submit", async (e) => {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  // Redirect to confirmation with PIN
+  // ✅ Redirect to confirmation page with PIN
   window.location.href = `confirmation.html?pin=${pin}`;
 });
 
-// ✅ This part must be OUTSIDE the submit listener!
+// ✅ Show current queue
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
@@ -57,11 +59,12 @@ db.collection("appointments")
       li.textContent = `${index + 1}. ${person.nickname} - ${person.type} - ${person.status}`;
       queueList.appendChild(li);
     });
-  }); 
-  
-  document.getElementById("goToStaff").addEventListener("click", () => {
+  });
+
+// ✅ Staff access button
+document.getElementById("goToStaff").addEventListener("click", () => {
   const staffPin = prompt("Enter staff PIN:");
-  const correctPin = "2025"; // 🔒 Set your secret PIN here
+  const correctPin = "2025"; // Change this to your desired staff access PIN
 
   if (staffPin === correctPin) {
     window.location.href = "staff.html";
