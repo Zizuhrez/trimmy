@@ -42,3 +42,17 @@ button {
   background-color: #ff0000;
   color: white;
 }
+
+.queue-item {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  font-size: 16px;
+  list-style: none;
+}
+
+.serving-badge {
+  color: #d97706;
+  font-weight: bold;
+  margin-left: 10px;
+}
