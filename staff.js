@@ -33,7 +33,16 @@ db.collection("appointments")
       if (person.status === "waiting") {
         const serveBtn = document.createElement("button");
         serveBtn.textContent = "Serving";
-        serveBtn.onclick = () => updateStatus(person.id, "serving");
+        
+        serveBtn.onclick = () => {
+  const enteredPin = prompt("Enter customer PIN:");
+  if (enteredPin === person.pin) {
+    updateStatus(person.id, "serving");
+  } else {
+    alert("Incorrect PIN. Cannot proceed.");
+  }
+};
+        
         li.appendChild(serveBtn);
       }
 
