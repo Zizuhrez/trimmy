@@ -6,6 +6,7 @@ body {
 }
 .container {
   background: white;
+   background:url('https://static.vecteezy.com/system/resources/previews/025/372/434/large_2x/barbershop-seamless-pattern-black-on-white-repeating-pattern-print-for-men-s-barber-shop-a-set-of-accessories-for-men-s-hairdresser-on-white-background-vector.jpg');
   max-width: 400px;
   margin: auto;
   padding: 20px;
