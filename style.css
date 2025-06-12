@@ -18,8 +18,7 @@ input, select, button {
 }
 button {
   background: green;
-  width:50%;
-  margin:50%:
+  width:100%;
   color: white;
   border: none;
   cursor: pointer;
