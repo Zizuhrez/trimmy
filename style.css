@@ -19,6 +19,7 @@ input, select, button {
 button {
   background: green;
   width:50%;
+  margin:50%:
   color: white;
   border: none;
   cursor: pointer;
