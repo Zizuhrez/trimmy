@@ -47,7 +47,7 @@ db.collection("appointments")
       const data = doc.data();
       if (data.status === "served") return;
 
-      if (data.status === "serving") {
+      if (data.status === "") {
         servingList.push(data);
       } else if (data.type === "VIP") {
         waitingVipList.push(data);
