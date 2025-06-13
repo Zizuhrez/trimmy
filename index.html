@@ -5,7 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Book Appointment</title>
   <link rel="stylesheet" href="style.css" />
-  <button id="goToStaff">Go to Staff Panel</button>
+  
+  <button id="goToStaff" class="staff-btn">Go to Staff Panel</button>
+
+<style>
+  .staff-btn {
+    width: 80%;
+    display: block;
+    margin: 20px auto;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .staff-btn:hover {
+    background-color: #45a049;
+  }
+</style>
   
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
