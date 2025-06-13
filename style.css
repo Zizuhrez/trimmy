@@ -67,7 +67,7 @@ button {
 }
 
 .container-one {
-  width: 100%;
+  width: 90%;
   height: 100vh; /* Full viewport height */
   box-sizing: border-box;
   padding: 0;
