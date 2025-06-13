@@ -26,7 +26,29 @@
       </select>
       
       <p id="paymentAmount">Payment: $0</p>
-      <button type="submit">Book Now</button>
+      
+      <button type="submit" class="book-btn">Book Now</button>
+
+<style>
+  .book-btn {
+    width: 50%;
+    display: block;
+    margin: 20px auto; /* top/bottom margin + center horizontally */
+    padding: 12px;
+    background-color: #4CAF50; /* green color */
+    color: white;
+    border: none;
+    border-radius: 25px; /* round corners */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .book-btn:hover {
+    background-color: #45a049;
+  }
+</style>
+      
     </form>
 
     <h3>Live Appointments</h3>
