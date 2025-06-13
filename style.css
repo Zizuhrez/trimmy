@@ -75,11 +75,9 @@ button {
 }
 
 .staff-title {
-  font-size: 36px;
+  font-size: 80px;
   font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
+  text-align: center;
+  margin-top: 30px; /* space from top */
+  color: #333;
 }
