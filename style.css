@@ -20,7 +20,7 @@ input, select, button {
 }
 button {
   background: green;
-  width:100%;
+  width:80%;
   border-radius: 6px;
   color: white;
   border: none;
@@ -51,7 +51,7 @@ button {
   padding: 10px 15px;
   margin-bottom: 10px;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 20px;
   list-style: none;
 }
 
@@ -76,4 +76,5 @@ button {
 }
 h1{
  color:azure;}
+
 
