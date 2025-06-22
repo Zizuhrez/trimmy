@@ -10,84 +10,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
 </head>
 <body>
-  <div class="container-one">
-    <h2 style="font-size: 36px; font-weight: bold; text-align: center; background-color: white; padding: 10px 20px; color: black; margin: 30px auto; display: inline-block; border-radius: 15px;">
-  Staff Management
-</h2>
-    <button id="clearServedBtn">Clear All Served Customers</button>
+  <div class="container">
+    <h2>Staff Management</h2>
+    <button id="clear-Btn">Clear All Served Customers</button>
     <ul id="staffQueue"></ul>
-  
-  <button onclick="logout()" class="logout-btn">Logout</button>
-
-<style>
-#staffQueue {
-  list-style-type: none;
-  padding: 0;
-  width: 90%;
-  margin: 0 auto;
-}
-
-.staff-item {
-  background-color: #fffbe6;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 28px;
-}
-
-.customer-name {
-  font-weight: bold;
-  flex: 1;
-}
-
-.action-buttons {
-  display: flex;
-  flex: 1;
-  gap: 10px;
-}
-
-.action-buttons button {
-  flex: 1;
-  padding: 8px;
-  font-size: 14px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.action-buttons .serve-btn {
-  background-color: #007bff;
-  color: white;
-}
-
-.action-buttons .mark-btn {
-  background-color: #ff9800;
-  color: white;
-}
-
-  .logout-btn {
-    width: 60%;
-    display: block;
-    margin: 20px auto;
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .logout-btn:hover {
-    background-color: #45a049;
-  }
-</style>
-  
+    <button onclick="logout()">Logout</button>
   </div>
   
 
