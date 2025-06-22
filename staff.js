@@ -1,3 +1,4 @@
+// Redirect to login if not authenticated
 firebase.auth().onAuthStateChanged(user => {
   if (!user) {
     window.location.href = "login.html";
@@ -6,10 +7,12 @@ firebase.auth().onAuthStateChanged(user => {
 
 const staffQueue = document.getElementById("staffQueue");
 
+// Function to update appointment status in Firestore
 function updateStatus(docId, newStatus) {
   db.collection("appointments").doc(docId).update({ status: newStatus });
 }
 
+// Real-time listener for appointments
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
@@ -33,16 +36,20 @@ db.collection("appointments")
     const fullList = [...servingList, ...vipList, ...regularList];
     staffQueue.innerHTML = "";
 
-    fullList.forEach((person, index) => {
+    fullList.forEach((person) => {
       const li = document.createElement("li");
       li.classList.add("queue-item");
 
-      li.innerHTML = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
+      const infoDiv = document.createElement("div");
+      infoDiv.classList.add("customer-info");
+      infoDiv.textContent = `${person.nickname} (${person.type})`;
 
-      // Add Serving button with PIN check
+      li.appendChild(infoDiv);
+
       if (person.status === "waiting") {
         const serveBtn = document.createElement("button");
-        serveBtn.textContent = "Serving";
+        serveBtn.textContent = "Serve";
+        serveBtn.classList.add("serve-btn");
 
         serveBtn.onclick = () => {
           const enteredPin = prompt("Enter customer PIN:");
@@ -54,27 +61,29 @@ db.collection("appointments")
         };
 
         li.appendChild(serveBtn);
-        li.style.backgroundColor = "#e0f2fe";
-        li.style.borderLeft = "5px solid #3b82f6";
       }
 
-      // Add Mark as Served button
       if (person.status === "serving") {
-        const servedBtn = document.createElement("button");
-        servedBtn.textContent = "Mark as Served";
-        servedBtn.onclick = () => updateStatus(person.id, "served");
-        li.appendChild(servedBtn);
+        const markBtn = document.createElement("button");
+        markBtn.textContent = "Mark as Served";
+        markBtn.classList.add("mark-btn");
 
-        li.style.backgroundColor = "#fff5d1";
-        li.style.borderLeft = "5px solid #facc15";
+        markBtn.onclick = () => {
+          const confirmMark = confirm(`Mark ${person.nickname} as served?`);
+          if (confirmMark) {
+            updateStatus(person.id, "served");
+          }
+        };
+
+        li.appendChild(markBtn);
       }
 
       staffQueue.appendChild(li);
     });
   });
 
-// Clear all served customers
-document.getElementById("clearServedBtn").addEventListener("click", () => {
+// Clear all served customers button
+document.getElementById("clear-Btn").addEventListener("click", () => {
   if (confirm("Are you sure you want to delete all served customers?")) {
     db.collection("appointments")
       .where("status", "==", "served")
@@ -95,7 +104,7 @@ document.getElementById("clearServedBtn").addEventListener("click", () => {
   }
 });
 
-// Logout button
+// Logout function
 function logout() {
   firebase.auth().signOut().then(() => {
     window.location.href = "login.html";
