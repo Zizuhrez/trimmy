@@ -1,81 +1,152 @@
 body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  background:url('https://static.vecteezy.com/system/resources/previews/025/372/434/large_2x/barbershop-seamless-pattern-black-on-white-repeating-pattern-print-for-men-s-barber-shop-a-set-of-accessories-for-men-s-hairdresser-on-white-background-vector.jpg');
+  font-family: 'Arial', sans-serif;
+  background: url('https://static.vecteezy.com/system/resources/previews/025/372/434/large_2x/barbershop-seamless-pattern-black-on-white-repeating-pattern-print-for-men-s-barber-shop-a-set-of-accessories-for-men-s-hairdresser-on-white-background-vector.jpg');
+  background-size: cover;
+  margin: 0;
   padding: 20px;
 }
-.container {
-  background-color:whitesmoke;
-  max-width: 600px;
-  margin: auto;
+
+h1, h2 {
+  text-align: center;
+  color: #333;
+}
+
+button, input, select {
+  font-family: inherit;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+}
+
+/* ==== Shared Container ==== */
+.container, .staff-panel-container {
+  max-width: 500px;
+  background: white;
+  margin: 0 auto;
   padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ==== Panel Heading ==== */
+.panel-heading {
+  font-size: 28px;
+  color: #4a4a4a;
+  margin-bottom: 20px;
+}
+
+/* ==== Staff Buttons ==== */
+#clear-Btn {
+  background-color: #28a745;
+  color: white;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: none;
+  font-size: 16px;
   border-radius: 8px;
+  cursor: pointer;
 }
-input, select, button {
+
+#clear-Btn:hover {
+  background-color: #218838;
+}
+
+button[onclick="logout()"] {
+  background-color: white;
+  color: #ff0000;
+  font-weight: bold;
+  border: 2px solid #ff0000;
+  border-radius: 6px;
+  padding: 12px;
+  width: 100%;
+  margin-top: 20px;
+  cursor: pointer;
+}
+
+button[onclick="logout()"]:hover {
+  background-color: #ff0000;
+  color: white;
+}
+
+
+/* ==== Staff Queue ==== */
+.queue-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.queue-item {
+  background: #f9f9f9;
+  padding: 15px 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.customer-info {
+  flex-grow: 1;
+  font-weight: bold;
+  color: #333;
+}
+
+.queue-item button {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
+  margin-top: 8px;
+}
+
+.serve-btn {
+  background-color: #28a745;
+  color: white;
+}
+
+.serve-btn:hover {
+  background-color: #218838;
+}
+
+.mark-btn {
+  background-color: #ff9800;
+  color: white;
+}
+
+.mark-btn:hover {
+  background-color: #fb8c00;
+}
+
+/* ==== Customer Booking Panel ==== */
+input, select {
   width: 85%;
   margin: 10px 0;
   padding: 10px;
-  font-size: 16px;
 }
-button {
+
+.customer-form button {
   background: green;
-  width:70%;
-  border-radius: 6px;
+  width: 70%;
   color: white;
-  border: none;
+  padding: 10px;
+  margin-top: 10px;
   cursor: pointer;
 }
+
+/* ==== Served Style ==== */
 .served {
   background-color: lightgray;
   text-decoration: line-through;
 }
 
-.logout-btn {
-  border: 2px solid #ff0000; /* 2px thick, red color */
-  border-radius: 6px;        /* Rounded corners */
-  padding: 10px 20px;        /* Button size */
-  background-color: white;
-  color: #ff0000;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.logout-btn:hover {
-  background-color: #ff0000;
-  color: white;
-}
-
-.queue-item {
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  font-size: 20px;
-  list-style: none;
-}
-
-.serving-badge {
-  color: #d97706;
-  font-weight: bold;
-  margin-left: 10px;
-}
-
-.queue-item button {
-  margin-left: 10px;
-  padding: 5px 10px;
-  font-size: 14px;
-}
-
-.container-one {
-  width: 90%;
-  height: 100vh; /* Full viewport height */
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-h1{
- color:blue;}
-
+/* ==== Animated Loading Dots ==== */
 .loading-text::after {
   content: '';
   display: inline-block;
@@ -90,5 +161,3 @@ h1{
   75% { content: '...'; }
   100% { content: ''; }
 }
-
-
