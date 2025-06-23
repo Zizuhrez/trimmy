@@ -1,3 +1,4 @@
+/* ==== Global ==== */
 body {
   font-family: 'Arial', sans-serif;
   background: url('https://static.vecteezy.com/system/resources/previews/025/372/434/large_2x/barbershop-seamless-pattern-black-on-white-repeating-pattern-print-for-men-s-barber-shop-a-set-of-accessories-for-men-s-hairdresser-on-white-background-vector.jpg');
@@ -160,18 +161,4 @@ input, select {
   50% { content: '..'; }
   75% { content: '...'; }
   100% { content: ''; }
-}
-
-.container-one {
-  width: 100vw;               /* Take full width of the viewport */
-  height: 100vh;              /* Take full height of the viewport */
-  display: flex;              /* Center the content */
-  justify-content: center;   
-  align-items: center;
-  background: white;          /* Optional: set background if needed */
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-  border-radius: 0;           /* Optional: remove any round edges */
-  box-shadow: none;           /* Optional: remove drop shadow */
 }
