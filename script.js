@@ -82,7 +82,7 @@ db.collection("appointments")
       let content = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
 
       if (person.status === "serving") {
-        content += ` <br>⭐<span style="font-weight: bold; color: green;">Currently Serving....</span>`;
+        content += ` <br>⭐<span class="loading-text" style="font-weight: bold; color: green;">Currently Serving....</span>`;
         li.style.backgroundColor = "#fff5d1";
         li.style.borderLeft = "5px solid #facc15";
       } else if (person.status === "waiting") {
