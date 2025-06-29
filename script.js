@@ -36,10 +36,19 @@ form.addEventListener("submit", async (e) => {
   });
 
   // Send confirmation email
+  const emailContent = `
+    <div style="font-family: system-ui, sans-serif; font-size: 14px; font-weight: bold;">
+      <p>Hello ${firstName},</p>
+      <p>Thank you for booking. Your confirmation PIN is: 
+        <span style="color: purple; font-size: 22px; font-weight: bold;">${pin}</span>.
+      </p>
+      <p>Regards,<br>Trimmy Team</p>
+    </div>
+  `;
+
   emailjs.send("service_wuu8gfg", "template_iy2so6y", {
-    title: "Trimmy",
     name: firstName,
-    pin: pin,
+    pin: emailContent,
     email: email
   }).then((res) => {
     console.log("✅ Email sent!", res.status);
@@ -51,7 +60,7 @@ form.addEventListener("submit", async (e) => {
   window.location.href = `confirmation.html?pin=${pin}`;
 });
 
-// Real-time appointment queue display
+// Live appointment display
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
@@ -62,14 +71,9 @@ db.collection("appointments")
     snapshot.forEach(doc => {
       const data = doc.data();
       if (data.status === "served") return;
-
-      if (data.status === "serving") {
-        servingList.push(data);
-      } else if (data.type === "VIP") {
-        waitingVipList.push(data);
-      } else {
-        waitingRegularList.push(data);
-      }
+      if (data.status === "serving") servingList.push(data);
+      else if (data.type === "VIP") waitingVipList.push(data);
+      else waitingRegularList.push(data);
     });
 
     const fullList = [...servingList, ...waitingVipList, ...waitingRegularList];
