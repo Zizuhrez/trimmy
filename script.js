@@ -10,51 +10,32 @@ appointmentType.addEventListener("change", () => {
                               type === "Regular" ? "Payment: $10" : "Payment: $0";
 });
 
-// Submit form
+// Booking form submission
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-
   const firstName = document.getElementById("firstName").value.trim();
   const lastName = document.getElementById("lastName").value.trim();
-  const email = document.getElementById("email").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const type = appointmentType.value;
   const price = type === "VIP" ? 20 : 10;
   const nickname = firstName.toLowerCase();
+
   const pin = Math.floor(1000 + Math.random() * 9000).toString();
 
-  // Save to Firestore
   await db.collection("appointments").add({
     nickname,
     phone,
     type,
     price,
     pin,
-    email,
     status: "waiting",
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  // Styled PIN HTML
-  const styledPin = `<span style="color: purple; font-size: 20px; font-weight: bold;">${pin}</span>`;
-
-  // Send Email
-  emailjs.send("service_wuu8gfg", "template_iy2so6y", {
-    name: firstName,
-    pin: styledPin,
-    title: "Trimmy",
-    email: email
-  }).then((res) => {
-    console.log("✅ Email sent!", res.status);
-  }).catch((err) => {
-    console.error("❌ Email failed", err);
-  });
-
-  // Redirect
   window.location.href = `confirmation.html?pin=${pin}`;
 });
 
-// Live queue display
+// Real-time queue display
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
@@ -85,7 +66,7 @@ db.collection("appointments")
       let content = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
 
       if (person.status === "serving") {
-        content += ` <br>⭐<span style="font-weight: bold; color: green;">Currently Serving....</span>`;
+        content += ` <br>⭐<span class="loading-text">Currently Serving....</span>`;
         li.style.backgroundColor = "#fff5d1";
         li.style.borderLeft = "5px solid #facc15";
       } else if (person.status === "waiting") {
@@ -98,10 +79,12 @@ db.collection("appointments")
     });
   });
 
-// Staff panel PIN check
+// Staff panel access
 document.getElementById("goToStaff").addEventListener("click", () => {
   const staffPin = prompt("Enter staff PIN:");
-  if (staffPin === "2025") {
+  const correctPin = "2025";
+
+  if (staffPin === correctPin) {
     window.location.href = "staff.html";
   } else {
     alert("Incorrect PIN. Access denied.");
