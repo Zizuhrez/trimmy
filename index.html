@@ -9,14 +9,28 @@
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
-  <script src="firebase.js"></script>
+
+  <!-- Firebase Config -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCBZieIBuGS_ZTIQgedZCQgV5zg8KxexUQ",
+      authDomain: "trimmy-9befa.firebaseapp.com",
+      projectId: "trimmy-9befa",
+      storageBucket: "trimmy-9befa.firebasestorage.app",
+      messagingSenderId: "1004261096048",
+      appId: "1:1004261096048:web:b1919461d044a91f6892b5",
+      measurementId: "G-TCTDHB8SWL"
+    };
+    firebase.initializeApp(firebaseConfig);
+    window.db = firebase.firestore();
+  </script>
 
   <!-- EmailJS SDK + Init -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     (function () {
       emailjs.init({
-        publicKey: "ok9u4YIv43lyg-QcX",
+        publicKey: "2Au7oG-qwnmIQjxZl",
       });
     })();
   </script>
