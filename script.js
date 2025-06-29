@@ -3,14 +3,14 @@ const appointmentType = document.getElementById("appointmentType");
 const paymentAmount = document.getElementById("paymentAmount");
 const queueList = document.getElementById("queueList");
 
-// Update payment display
+// Update payment text
 appointmentType.addEventListener("change", () => {
   const type = appointmentType.value;
   paymentAmount.textContent = type === "VIP" ? "Payment: $20" :
                               type === "Regular" ? "Payment: $10" : "Payment: $0";
 });
 
-// Booking form submission
+// Submit form
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -35,20 +35,14 @@ form.addEventListener("submit", async (e) => {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  // Send confirmation email
-  const emailContent = `
-    <div style="font-family: system-ui, sans-serif; font-size: 14px; font-weight: bold;">
-      <p>Hello ${firstName},</p>
-      <p>Thank you for booking. Your confirmation PIN is: 
-        <span style="color: purple; font-size: 22px; font-weight: bold;">${pin}</span>.
-      </p>
-      <p>Regards,<br>Trimmy Team</p>
-    </div>
-  `;
+  // Styled PIN HTML
+  const styledPin = `<span style="color: purple; font-size: 20px; font-weight: bold;">${pin}</span>`;
 
+  // Send Email
   emailjs.send("service_wuu8gfg", "template_iy2so6y", {
     name: firstName,
-    pin: emailContent,
+    pin: styledPin,
+    title: "Trimmy",
     email: email
   }).then((res) => {
     console.log("✅ Email sent!", res.status);
@@ -56,11 +50,11 @@ form.addEventListener("submit", async (e) => {
     console.error("❌ Email failed", err);
   });
 
-  // Redirect to confirmation page
+  // Redirect
   window.location.href = `confirmation.html?pin=${pin}`;
 });
 
-// Live appointment display
+// Live queue display
 db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot(snapshot => {
@@ -71,9 +65,14 @@ db.collection("appointments")
     snapshot.forEach(doc => {
       const data = doc.data();
       if (data.status === "served") return;
-      if (data.status === "serving") servingList.push(data);
-      else if (data.type === "VIP") waitingVipList.push(data);
-      else waitingRegularList.push(data);
+
+      if (data.status === "serving") {
+        servingList.push(data);
+      } else if (data.type === "VIP") {
+        waitingVipList.push(data);
+      } else {
+        waitingRegularList.push(data);
+      }
     });
 
     const fullList = [...servingList, ...waitingVipList, ...waitingRegularList];
@@ -99,11 +98,10 @@ db.collection("appointments")
     });
   });
 
-// Staff panel access
+// Staff panel PIN check
 document.getElementById("goToStaff").addEventListener("click", () => {
   const staffPin = prompt("Enter staff PIN:");
-  const correctPin = "2025";
-  if (staffPin === correctPin) {
+  if (staffPin === "2025") {
     window.location.href = "staff.html";
   } else {
     alert("Incorrect PIN. Access denied.");
