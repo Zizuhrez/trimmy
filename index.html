@@ -10,68 +10,15 @@
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
 
-  <!-- Firebase Config -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCBZieIBuGS_ZTIQgedZCQgV5zg8KxexUQ",
-      authDomain: "trimmy-9befa.firebaseapp.com",
-      projectId: "trimmy-9befa",
-      storageBucket: "trimmy-9befa.firebasestorage.app",
-      messagingSenderId: "1004261096048",
-      appId: "1:1004261096048:web:b1919461d044a91f6892b5",
-      measurementId: "G-TCTDHB8SWL"
-    };
-    firebase.initializeApp(firebaseConfig);
-    window.db = firebase.firestore();
-  </script>
-
-  <!-- EmailJS SDK + Init -->
+  <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <!-- Init EmailJS -->
   <script>
     (function () {
-      emailjs.init({
-        publicKey: "2Au7oG-qwnmIQjxZl",
-      });
+      emailjs.init("2Au7oG-qwnmIQjxZl"); // Your public key
     })();
   </script>
-
-  <style>
-    .staff-btn {
-      width: 90%;
-      display: block;
-      margin: 20px auto;
-      padding: 12px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 25px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .staff-btn:hover {
-      background-color: #45a049;
-    }
-
-    .book-btn {
-      width: 50%;
-      display: block;
-      margin: 20px auto;
-      padding: 12px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 25px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .book-btn:hover {
-      background-color: #45a049;
-    }
-  </style>
 </head>
 <body>
   <div class="container">
@@ -100,6 +47,7 @@
     <ul id="queueList"></ul>
   </div>
 
+  <script src="firebase.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
