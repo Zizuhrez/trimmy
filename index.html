@@ -5,73 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Book Appointment</title>
   <link rel="stylesheet" href="style.css" />
-  
-  <button id="goToStaff" class="staff-btn">Go to Staff Panel</button>
 
-<style>
-  .staff-btn {
-    width: 90%;
-    display: block;
-    margin: 20px auto;
-    padding: 12px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .staff-btn:hover {
-    background-color: #45a049;
-  }
-</style>
-  
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
   <script src="firebase.js"></script>
+
+  <!-- EmailJS SDK + Init -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init({
+        publicKey: "2Au7oG-qwnmIQjxZl", // your public key
+      });
+    })();
+  </script>
+
+  <style>
+    .staff-btn {
+      width: 90%;
+      display: block;
+      margin: 20px auto;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .staff-btn:hover {
+      background-color: #45a049;
+    }
+
+    .book-btn {
+      width: 50%;
+      display: block;
+      margin: 20px auto;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .book-btn:hover {
+      background-color: #45a049;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1 style="color: purple;" >Customer Panel<h1>
-      
+    <h1 style="color: purple;">Customer Panel</h1>
+
     <form id="bookingForm">
       <input type="text" id="firstName" placeholder="First Name" required />
       <input type="text" id="lastName" placeholder="Last Name" required />
+      <input type="email" id="email" placeholder="Email Address" required />
       <input type="tel" id="phone" placeholder="Phone Number" required />
-      
+
       <select id="appointmentType" required>
         <option value="">Select Type</option>
         <option value="Regular">Regular ($10)</option>
         <option value="VIP">VIP ($20)</option>
       </select>
-      
+
       <p id="paymentAmount" style="color: grey; font-weight: bold;">Payment: $0</p>
-      
+
       <button type="submit" class="book-btn">Book Now</button>
-
-<style>
-  .book-btn {
-    width: 50%;
-    display: block;
-    margin: 20px auto; /* top/bottom margin + center horizontally */
-    padding: 12px;
-    background-color: #4CAF50; /* green color */
-    color: white;
-    border: none;
-    border-radius: 25px; /* round corners */
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-
-  .book-btn:hover {
-    background-color: #45a049;
-  }
-</style>
-      
     </form>
+
+    <button id="goToStaff" class="staff-btn">Go to Staff Panel</button>
 
     <h3 style="color: purple;">Live Appointments</h3>
     <ul id="queueList"></ul>
