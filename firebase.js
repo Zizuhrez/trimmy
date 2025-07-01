@@ -1,4 +1,4 @@
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCBZieIBuGS_ZTIQgedZCQgV5zg8KxexUQ",
   authDomain: "trimmy-9befa.firebaseapp.com",
@@ -8,7 +8,9 @@ const firebaseConfig = {
   appId: "1:1004261096048:web:b1919461d044a91f6892b5",
   measurementId: "G-TCTDHB8SWL"
 };
+
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-
+// Make Firestore available globally
 window.db = firebase.firestore();
