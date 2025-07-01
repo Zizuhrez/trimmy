@@ -3,47 +3,65 @@ const appointmentType = document.getElementById("appointmentType");
 const paymentAmount = document.getElementById("paymentAmount");
 const queueList = document.getElementById("queueList");
 
-// Update payment text
+// Update payment display
 appointmentType.addEventListener("change", () => {
   const type = appointmentType.value;
-  paymentAmount.textContent = type === "VIP" ? "Payment: $20" :
-                              type === "Regular" ? "Payment: $10" : "Payment: $0";
+  paymentAmount.textContent =
+    type === "VIP" ? "Payment: $20" :
+    type === "Regular" ? "Payment: $10" :
+    "Payment: $0";
 });
 
 // Booking form submission
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+
   const firstName = document.getElementById("firstName").value.trim();
   const lastName = document.getElementById("lastName").value.trim();
+  const email = document.getElementById("email").value.trim();
   const phone = document.getElementById("phone").value.trim();
   const type = appointmentType.value;
   const price = type === "VIP" ? 20 : 10;
   const nickname = firstName.toLowerCase();
-
   const pin = Math.floor(1000 + Math.random() * 9000).toString();
 
-  await db.collection("appointments").add({
+  // Save to Firestore
+  await firebase.firestore().collection("appointments").add({
     nickname,
     phone,
     type,
     price,
     pin,
+    email,
     status: "waiting",
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
+  // Send confirmation email with EmailJS
+  emailjs.send("service_wuu8gfg", "template_iy2so6y", {
+    title: "Trimmy",
+    name: firstName,
+    pin: pin,
+    email: email // Matches {{email}} in EmailJS template
+  }).then((res) => {
+    console.log("✅ Email sent!", res.status);
+  }).catch((err) => {
+    console.error("❌ Email failed", err);
+  });
+
+  // Redirect to confirmation page
   window.location.href = `confirmation.html?pin=${pin}`;
 });
 
-// Real-time queue display
-db.collection("appointments")
+// Live queue display
+firebase.firestore().collection("appointments")
   .orderBy("timestamp")
-  .onSnapshot(snapshot => {
+  .onSnapshot((snapshot) => {
     const servingList = [];
     const waitingVipList = [];
     const waitingRegularList = [];
 
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       const data = doc.data();
       if (data.status === "served") return;
 
@@ -66,7 +84,7 @@ db.collection("appointments")
       let content = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
 
       if (person.status === "serving") {
-        content += ` <br>⭐<span class="loading-text">Currently Serving....</span>`;
+        content += `<br>⭐<span style="font-weight: bold; color: green;">Currently Serving....</span>`;
         li.style.backgroundColor = "#fff5d1";
         li.style.borderLeft = "5px solid #facc15";
       } else if (person.status === "waiting") {
@@ -83,7 +101,6 @@ db.collection("appointments")
 document.getElementById("goToStaff").addEventListener("click", () => {
   const staffPin = prompt("Enter staff PIN:");
   const correctPin = "2025";
-
   if (staffPin === correctPin) {
     window.location.href = "staff.html";
   } else {
