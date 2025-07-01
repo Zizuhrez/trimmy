@@ -1,3 +1,6 @@
+// Initialize EmailJS
+emailjs.init("2Au7oG-qwnmIQjxZl"); // Your public key
+
 const form = document.getElementById("bookingForm");
 const appointmentType = document.getElementById("appointmentType");
 const paymentAmount = document.getElementById("paymentAmount");
@@ -26,7 +29,7 @@ form.addEventListener("submit", async (e) => {
   const pin = Math.floor(1000 + Math.random() * 9000).toString();
 
   // Save to Firestore
-  await firebase.firestore().collection("appointments").add({
+  await window.db.collection("appointments").add({
     nickname,
     phone,
     type,
@@ -38,14 +41,18 @@ form.addEventListener("submit", async (e) => {
   });
 
   // Send confirmation email with EmailJS
+  alert("📨 About to send email to: " + email);
+
   emailjs.send("service_wuu8gfg", "template_iy2so6y", {
     title: "Trimmy",
     name: firstName,
     pin: pin,
-    email: email // Matches {{email}} in EmailJS template
+    email: email
   }).then((res) => {
+    alert("✅ Email sent successfully to: " + email);
     console.log("✅ Email sent!", res.status);
   }).catch((err) => {
+    alert("❌ Failed to send email: " + JSON.stringify(err));
     console.error("❌ Email failed", err);
   });
 
@@ -54,7 +61,7 @@ form.addEventListener("submit", async (e) => {
 });
 
 // Live queue display
-firebase.firestore().collection("appointments")
+window.db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot((snapshot) => {
     const servingList = [];
