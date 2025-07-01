@@ -38,20 +38,17 @@ form.addEventListener("submit", async (e) => {
   });
 
   // Send confirmation email with EmailJS
-alert("📨 About to send email to: " + email);  // <-- ADD THIS LINE
+  emailjs.send("service_wuu8gfg", "template_iy2so6y", {
+    title: "Trimmy",
+    name: firstName,
+    pin: pin,
+    email: email // Matches {{email}} in EmailJS template
+  }).then((res) => {
+    console.log("✅ Email sent!", res.status);
+  }).catch((err) => {
+    console.error("❌ Email failed", err);
+  });
 
-emailjs.send("service_wuu8gfg", "template_iy2so6y", {
-  title: "Trimmy",
-  name: firstName,
-  pin: pin,
-  email: email
-}).then((res) => {
-  alert("✅ Email sent successfully to: " + email); // <-- ADD THIS LINE
-  console.log("✅ Email sent!", res.status);
-}).catch((err) => {
-  alert("❌ Failed to send email: " + JSON.stringify(err)); // <-- ADD THIS LINE
-  console.error("❌ Email failed", err);
-});
   // Redirect to confirmation page
   window.location.href = `confirmation.html?pin=${pin}`;
 });
