@@ -1,5 +1,5 @@
-// Initialize EmailJS
-emailjs.init("nO9ZFWn0cXxoA8o2A"); // Your public key
+// Init EmailJS with your public key
+emailjs.init("nO9ZFWn0cXxoA8o2A");
 
 const form = document.getElementById("bookingForm");
 const appointmentType = document.getElementById("appointmentType");
@@ -40,7 +40,7 @@ form.addEventListener("submit", async (e) => {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  // Send confirmation email with EmailJS
+  // Send confirmation email using EmailJS
   alert("📨 About to send email to: " + email);
 
   emailjs.send("service_wuu8gfg", "template_iy2so6y", {
@@ -49,11 +49,10 @@ form.addEventListener("submit", async (e) => {
     pin: pin,
     email: email
   }).then((res) => {
-    alert("✅ Email sent successfully to: " + email);
-    console.log("✅ Email sent!", res.status);
+    alert("✅ Email sent successfully!");
   }).catch((err) => {
     alert("❌ Failed to send email: " + JSON.stringify(err));
-    console.error("❌ Email failed", err);
+    console.error("EmailJS Error:", err);
   });
 
   // Redirect to confirmation page
