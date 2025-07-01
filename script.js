@@ -1,5 +1,5 @@
 // Initialize EmailJS
-emailjs.init("2Au7oG-qwnmIQjxZl"); // Your public key
+emailjs.init("nO9ZFWn0cXxoA8o2A"); // Your public key
 
 const form = document.getElementById("bookingForm");
 const appointmentType = document.getElementById("appointmentType");
