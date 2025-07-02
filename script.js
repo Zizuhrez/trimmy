@@ -51,7 +51,6 @@ form.addEventListener("submit", async (e) => {
   }).then((res) => {
     alert("✅ Email sent successfully!");
   }).catch((err) => {
-    alert("❌ Failed to send email: " + JSON.stringify(err));
     console.error("EmailJS Error:", err);
   });
 
