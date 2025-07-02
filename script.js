@@ -49,13 +49,10 @@ form.addEventListener("submit", async (e) => {
     pin: pin,
     email: email
   }).then((res) => {
-    if (res.status === 200 || res.status === 0) {
-      alert("✅ Email sent successfully!");
-    } else {
-      alert("⚠️ Email may have been sent, but status was unclear.");
-    }
+    alert("✅ Email sent successfully!");
   }).catch((err) => {
-    console.warn("⚠️ EmailJS possibly failed, but email may still have been sent.", err);
+    alert("❌ Failed to send email: " + JSON.stringify(err));
+    console.error("EmailJS Error:", err);
   });
 
   // Redirect to confirmation page
