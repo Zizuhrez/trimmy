@@ -51,7 +51,7 @@ emailjs.send("service_wuu8gfg", "template_iy2so6y", {
 }).then((res) => {
   alert("✅ Email sent successfully!");
 }).catch((err) => {
-  alert("✅ Good to go! Email likely sent.");
+  alert("✅ Good to go! But error returned: " + JSON.stringify(err));
   console.error("EmailJS Error:", err);
 });
 
