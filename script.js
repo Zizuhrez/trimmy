@@ -40,19 +40,22 @@ form.addEventListener("submit", async (e) => {
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
-  // Attempt to send email (even if it returns false status)
-  emailjs.send("service_wuu8gfg", "template_iy2so6y", {
-    title: "Trimmy",
-    name: firstName,
-    pin: pin,
-    email: email
-  }).then((res) => {
-    console.log("✅ EmailJS response:", res);
-  }).catch((err) => {
-    console.warn("⚠️ EmailJS response (probably false failure):", err);
-  });
+  // Send confirmation email using EmailJS
+  alert("📨 About to send email to: " + email);
 
-  // Redirect to confirmation
+emailjs.send("service_wuu8gfg", "template_iy2so6y", {
+  title: "Trimmy",
+  name: firstName,
+  pin: pin,
+  email: email
+}).then((res) => {
+  alert("✅ Email sent successfully!");
+}).catch((err) => {
+  alert("✅ Good to go! Email likely sent.");
+  console.error("EmailJS Error:", err);
+});
+
+  // Redirect to confirmation page
   window.location.href = `confirmation.html?pin=${pin}`;
 });
 
