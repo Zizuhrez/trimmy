@@ -43,17 +43,17 @@ form.addEventListener("submit", async (e) => {
   // Send confirmation email using EmailJS
   alert("📨 About to send email to: " + email);
 
-  emailjs.send("service_wuu8gfg", "template_iy2so6y", {
-    title: "Trimmy",
-    name: firstName,
-    pin: pin,
-    email: email
-  }).then((res) => {
-    alert("✅ Email sent successfully!");
-  }).catch((err) => {
-    alert("✅ Good to go: " + JSON.stringify(err));
-    console.error("EmailJS Error:", err);
-  });
+emailjs.send("service_wuu8gfg", "template_iy2so6y", {
+  title: "Trimmy",
+  name: firstName,
+  pin: pin,
+  email: email
+}).then((res) => {
+  alert("✅ Email sent successfully!");
+}).catch((err) => {
+  alert("✅ Good to go! But error returned: " + JSON.stringify(err));
+  console.error("EmailJS Error:", err);
+});
 
   // Redirect to confirmation page
   window.location.href = `confirmation.html?pin=${pin}`;
