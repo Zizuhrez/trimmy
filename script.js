@@ -28,8 +28,8 @@ form.addEventListener("submit", async (e) => {
   const nickname = firstName.toLowerCase();
   const pin = Math.floor(1000 + Math.random() * 9000).toString();
 
-  // Save to Firestore
-  await window.db.collection("appointments").add({
+  // Save to Firestore using PIN as document ID
+  await window.db.collection("appointments").doc(pin).set({
     nickname,
     phone,
     type,
