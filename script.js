@@ -1,112 +1,115 @@
-// Redirect to login if not authenticated
-firebase.auth().onAuthStateChanged(user => {
-  if (!user) {
-    window.location.href = "login.html";
-  }
+// Init EmailJS with your public key
+emailjs.init("nO9ZFWn0cXxoA8o2A");
+
+const form = document.getElementById("bookingForm");
+const appointmentType = document.getElementById("appointmentType");
+const paymentAmount = document.getElementById("paymentAmount");
+const queueList = document.getElementById("queueList");
+
+// Update payment display
+appointmentType.addEventListener("change", () => {
+  const type = appointmentType.value;
+  paymentAmount.textContent =
+    type === "VIP" ? "Payment: $20" :
+    type === "Regular" ? "Payment: $10" :
+    "Payment: $0";
 });
 
-const staffQueue = document.getElementById("staffQueue");
+// Booking form submission
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-// Function to update appointment status in Firestore
-function updateStatus(docId, newStatus) {
-  db.collection("appointments").doc(docId).update({ status: newStatus });
-}
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const type = appointmentType.value;
+  const price = type === "VIP" ? 20 : 10;
+  const nickname = firstName.toLowerCase();
+  const pin = Math.floor(1000 + Math.random() * 9000).toString();
 
-// Real-time listener for appointments
-db.collection("appointments")
+  // Save to Firestore
+  await window.db.collection("appointments").add({
+    nickname,
+    phone,
+    type,
+    price,
+    pin,
+    email,
+    status: "waiting",
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  // Send confirmation email using EmailJS
+  alert("📨 About to send email to: " + email);
+
+  emailjs.send("service_wuu8gfg", "template_iy2so6y", {
+    title: "Trimmy",
+    name: firstName,
+    pin: pin,
+    email: email
+  }).then((res) => {
+    alert("✅ Email sent successfully!");
+  }).catch((err) => {
+    alert("✅ Good to go: " + JSON.stringify(err));
+    console.error("EmailJS Error:", err);
+  });
+
+  // Redirect to confirmation page
+  window.location.href = `confirmation.html?pin=${pin}`;
+});
+
+// Live queue display
+window.db.collection("appointments")
   .orderBy("timestamp")
-  .onSnapshot(snapshot => {
+  .onSnapshot((snapshot) => {
     const servingList = [];
-    const vipList = [];
-    const regularList = [];
+    const waitingVipList = [];
+    const waitingRegularList = [];
 
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       const data = doc.data();
-      data.id = doc.id;
+      if (data.status === "served") return;
 
       if (data.status === "serving") {
         servingList.push(data);
-      } else if (data.status === "waiting" && data.type === "VIP") {
-        vipList.push(data);
-      } else if (data.status === "waiting" && data.type === "Regular") {
-        regularList.push(data);
+      } else if (data.type === "VIP") {
+        waitingVipList.push(data);
+      } else {
+        waitingRegularList.push(data);
       }
     });
 
-    const fullList = [...servingList, ...vipList, ...regularList];
-    staffQueue.innerHTML = "";
+    const fullList = [...servingList, ...waitingVipList, ...waitingRegularList];
+    queueList.innerHTML = "";
 
-    fullList.forEach((person) => {
+    fullList.forEach((person, index) => {
       const li = document.createElement("li");
       li.classList.add("queue-item");
 
-      const infoDiv = document.createElement("div");
-      infoDiv.classList.add("customer-info");
-      infoDiv.textContent = `${person.nickname} (${person.type})`;
-
-      li.appendChild(infoDiv);
-
-      if (person.status === "waiting") {
-        const serveBtn = document.createElement("button");
-        serveBtn.textContent = "Serve";
-        serveBtn.classList.add("serve-btn");
-
-        serveBtn.onclick = () => {
-          const enteredPin = prompt("Enter customer PIN:");
-          if (enteredPin === person.pin.toString()) {
-            updateStatus(person.id, "serving");
-          } else {
-            alert("Incorrect PIN. Cannot proceed.");
-          }
-        };
-
-        li.appendChild(serveBtn);
-      }
+      let content = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
 
       if (person.status === "serving") {
-        const markBtn = document.createElement("button");
-        markBtn.textContent = "Mark as Served";
-        markBtn.classList.add("mark-btn");
-
-        markBtn.onclick = () => {
-          const confirmMark = confirm(`Mark ${person.nickname} as served?`);
-          if (confirmMark) {
-            updateStatus(person.id, "served");
-          }
-        };
-
-        li.appendChild(markBtn);
+        content += `<br>⭐<span style="font-weight: bold; color: green;">Currently Serving....</span>`;
+        li.style.backgroundColor = "#fff5d1";
+        li.style.borderLeft = "5px solid #facc15";
+      } else if (person.status === "waiting") {
+        li.style.backgroundColor = "#e0f2fe";
+        li.style.borderLeft = "5px solid #3b82f6";
       }
 
-      staffQueue.appendChild(li);
+      li.innerHTML = content;
+      queueList.appendChild(li);
     });
   });
 
-// Clear all served customers button
-document.getElementById("clear-Btn").addEventListener("click", () => {
-  if (confirm("Are you sure you want to delete all served customers?")) {
-    db.collection("appointments")
-      .where("status", "==", "served")
-      .get()
-      .then(snapshot => {
-        const batch = db.batch();
-        snapshot.forEach(doc => {
-          batch.delete(doc.ref);
-        });
-        return batch.commit();
-      })
-      .then(() => {
-        alert("All served customers cleared.");
-      })
-      .catch(error => {
-        console.error("Error clearing served customers:", error);
-      });
+// Staff panel access
+document.getElementById("goToStaff").addEventListener("click", () => {
+  const staffPin = prompt("Enter staff PIN:");
+  const correctPin = "2025";
+  if (staffPin === correctPin) {
+    window.location.href = "staff.html";
+  } else {
+    alert("Incorrect PIN. Access denied.");
   }
 });
-
-// Logout function
-function logout() {
-  firebase.auth().signOut().then(() => {
-    window.location.href = "login.html";
-  });
-}
