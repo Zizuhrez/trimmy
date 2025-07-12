@@ -1,115 +1,112 @@
-// Init EmailJS with your public key
-emailjs.init("nO9ZFWn0cXxoA8o2A");
-
-const form = document.getElementById("bookingForm");
-const appointmentType = document.getElementById("appointmentType");
-const paymentAmount = document.getElementById("paymentAmount");
-const queueList = document.getElementById("queueList");
-
-// Update payment display
-appointmentType.addEventListener("change", () => {
-  const type = appointmentType.value;
-  paymentAmount.textContent =
-    type === "VIP" ? "Payment: $20" :
-    type === "Regular" ? "Payment: $10" :
-    "Payment: $0";
+// Redirect to login if not authenticated
+firebase.auth().onAuthStateChanged(user => {
+  if (!user) {
+    window.location.href = "login.html";
+  }
 });
 
-// Booking form submission
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+const staffQueue = document.getElementById("staffQueue");
 
-  const firstName = document.getElementById("firstName").value.trim();
-  const lastName = document.getElementById("lastName").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const type = appointmentType.value;
-  const price = type === "VIP" ? 20 : 10;
-  const nickname = firstName.toLowerCase();
-  const pin = Math.floor(1000 + Math.random() * 9000).toString();
+// Function to update appointment status in Firestore
+function updateStatus(docId, newStatus) {
+  db.collection("appointments").doc(docId).update({ status: newStatus });
+}
 
-  // Save to Firestore using the PIN as document ID
-  await window.db.collection("appointments").doc(pin).set({
-    nickname,
-    phone,
-    type,
-    price,
-    pin,
-    email,
-    status: "waiting",
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  });
-
-  // Send confirmation email using EmailJS
-  alert("📨 About to send email to: " + email);
-
-  emailjs.send("service_wuu8gfg", "template_iy2so6y", {
-    title: "Trimmy",
-    name: firstName,
-    pin: pin,
-    email: email
-  }).then((res) => {
-    alert("✅ Email sent successfully!");
-  }).catch((err) => {
-    alert("✅ Good to go: " + JSON.stringify(err));
-    console.error("EmailJS Error:", err);
-  });
-
-  // Redirect to confirmation page
-  window.location.href = `confirmation.html?pin=${pin}`;
-});
-
-// Live queue display
-window.db.collection("appointments")
+// Real-time listener for appointments
+db.collection("appointments")
   .orderBy("timestamp")
-  .onSnapshot((snapshot) => {
+  .onSnapshot(snapshot => {
     const servingList = [];
-    const waitingVipList = [];
-    const waitingRegularList = [];
+    const vipList = [];
+    const regularList = [];
 
-    snapshot.forEach((doc) => {
+    snapshot.forEach(doc => {
       const data = doc.data();
-      if (data.status === "served") return;
+      data.id = doc.id;
 
       if (data.status === "serving") {
         servingList.push(data);
-      } else if (data.type === "VIP") {
-        waitingVipList.push(data);
-      } else {
-        waitingRegularList.push(data);
+      } else if (data.status === "waiting" && data.type === "VIP") {
+        vipList.push(data);
+      } else if (data.status === "waiting" && data.type === "Regular") {
+        regularList.push(data);
       }
     });
 
-    const fullList = [...servingList, ...waitingVipList, ...waitingRegularList];
-    queueList.innerHTML = "";
+    const fullList = [...servingList, ...vipList, ...regularList];
+    staffQueue.innerHTML = "";
 
-    fullList.forEach((person, index) => {
+    fullList.forEach((person) => {
       const li = document.createElement("li");
       li.classList.add("queue-item");
 
-      let content = `<strong>${index + 1}. ${person.nickname}</strong> - ${person.type} - ${person.status}`;
+      const infoDiv = document.createElement("div");
+      infoDiv.classList.add("customer-info");
+      infoDiv.textContent = `${person.nickname} (${person.type})`;
 
-      if (person.status === "serving") {
-        content += `<br>⭐<span style="font-weight: bold; color: green;">Currently Serving....</span>`;
-        li.style.backgroundColor = "#fff5d1";
-        li.style.borderLeft = "5px solid #facc15";
-      } else if (person.status === "waiting") {
-        li.style.backgroundColor = "#e0f2fe";
-        li.style.borderLeft = "5px solid #3b82f6";
+      li.appendChild(infoDiv);
+
+      if (person.status === "waiting") {
+        const serveBtn = document.createElement("button");
+        serveBtn.textContent = "Serve";
+        serveBtn.classList.add("serve-btn");
+
+        serveBtn.onclick = () => {
+          const enteredPin = prompt("Enter customer PIN:");
+          if (enteredPin === person.pin.toString()) {
+            updateStatus(person.id, "serving");
+          } else {
+            alert("Incorrect PIN. Cannot proceed.");
+          }
+        };
+
+        li.appendChild(serveBtn);
       }
 
-      li.innerHTML = content;
-      queueList.appendChild(li);
+      if (person.status === "serving") {
+        const markBtn = document.createElement("button");
+        markBtn.textContent = "Mark as Served";
+        markBtn.classList.add("mark-btn");
+
+        markBtn.onclick = () => {
+          const confirmMark = confirm(`Mark ${person.nickname} as served?`);
+          if (confirmMark) {
+            updateStatus(person.id, "served");
+          }
+        };
+
+        li.appendChild(markBtn);
+      }
+
+      staffQueue.appendChild(li);
     });
   });
 
-// Staff panel access
-document.getElementById("goToStaff").addEventListener("click", () => {
-  const staffPin = prompt("Enter staff PIN:");
-  const correctPin = "2025";
-  if (staffPin === correctPin) {
-    window.location.href = "staff.html";
-  } else {
-    alert("Incorrect PIN. Access denied.");
+// Clear all served customers button
+document.getElementById("clear-Btn").addEventListener("click", () => {
+  if (confirm("Are you sure you want to delete all served customers?")) {
+    db.collection("appointments")
+      .where("status", "==", "served")
+      .get()
+      .then(snapshot => {
+        const batch = db.batch();
+        snapshot.forEach(doc => {
+          batch.delete(doc.ref);
+        });
+        return batch.commit();
+      })
+      .then(() => {
+        alert("All served customers cleared.");
+      })
+      .catch(error => {
+        console.error("Error clearing served customers:", error);
+      });
   }
 });
+
+// Logout function
+function logout() {
+  firebase.auth().signOut().then(() => {
+    window.location.href = "login.html";
+  });
+}
