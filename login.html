@@ -24,7 +24,7 @@
 
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then(() => {
-          window.location.href = "staff.html"; // Redirect to staff panel
+          window.location.href = "staff.html";
         })
         .catch(error => {
           document.getElementById("errorMsg").textContent = error.message;
