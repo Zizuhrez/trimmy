@@ -28,27 +28,31 @@ form.addEventListener("submit", async (e) => {
   const nickname = firstName.toLowerCase();
   const pin = Math.floor(1000 + Math.random() * 9000).toString();
 
-  // Save to Firestore using PIN as document ID
+  // Save to Firestore
   await window.db.collection("appointments").doc(pin).set({
     nickname,
     phone,
     type,
     price,
+    pin,
     email,
     status: "waiting",
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
 
   // Send confirmation email using EmailJS
+  alert("📨 About to send email to: " + email);
+
   emailjs.send("service_wuu8gfg", "template_iy2so6y", {
     title: "Trimmy",
     name: firstName,
     pin: pin,
     email: email
-  }).then(() => {
+  }).then((res) => {
     alert("✅ Email sent successfully!");
   }).catch((err) => {
-    alert("⚠️ Email sending failed: " + JSON.stringify(err));
+    // Still show success message to customer
+    alert("✅ Good to go!");
     console.error("EmailJS Error:", err);
   });
 
@@ -56,7 +60,7 @@ form.addEventListener("submit", async (e) => {
   window.location.href = `confirmation.html?pin=${pin}`;
 });
 
-// Live queue display (optional in customer page)
+// Live queue display
 window.db.collection("appointments")
   .orderBy("timestamp")
   .onSnapshot((snapshot) => {
